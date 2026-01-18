@@ -21,6 +21,7 @@ interface EditorState {
   }
   profileLayout: "center" | "left-stack" | "left-row"
   socials: Array<{ id: string; platform: string; url: string }>;
+  cardTexture: "base" | "glassy"
 }
 
 export default function DashboardEditor() {
@@ -39,6 +40,7 @@ export default function DashboardEditor() {
     },
     profileLayout: "center",
     socials: [],
+    cardTexture: "base",
   })
 
   const updateState = (updates: Partial<EditorState>) => {

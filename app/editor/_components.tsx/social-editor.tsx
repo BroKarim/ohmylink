@@ -101,7 +101,7 @@ export function SocialMediaEditor({ state, onUpdate }: any) {
                               : "border-muted bg-card"
                           }`}
                         >
-                          <Icon className={`h-5 w-5 flex-shrink-0 ${isSelected ? "text-primary" : ""}`} />
+                          <Icon className={`h-5 w-5 shrink-0 ${isSelected ? "text-primary" : ""}`} />
                           <span className="text-sm font-medium truncate">{platform.label}</span>
                         </button>
                       )

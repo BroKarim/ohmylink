@@ -17,12 +17,12 @@ const GRADIENT_PRESETS = [
 const COLORS = ["#1a1a1a", "#2d2d2d", "#3f3f3f", "#4f4f4f", "#1e293b", "#334155"]
 
 const WALLPAPER_PRESETS = [
-  "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400",
-  "https://images.unsplash.com/photo-1634128221889-82ed6efebfc3?q=80&w=400",
-  "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=400",
-  "https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=400",
-  "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=400",
-  "https://images.unsplash.com/photo-1506318137071-a8e063b4bcc0?q=80&w=400",
+  "https://images.unsplash.com/photo-1765498069280-b863094c17bf?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1767321173860-52dea6b50337?q=80&w=1975&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1767321173860-52dea6b50337?q=80&w=1975&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1767321173860-52dea6b50337?q=80&w=1975&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1767321173860-52dea6b50337?q=80&w=1975&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1767321173860-52dea6b50337?q=80&w=1975&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 ]
 
 interface BackgroundOptionsProps {

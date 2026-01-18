@@ -1,10 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { Palette, Layers, BarChart3, Settings, User } from "lucide-react"
+import { Palette,  BarChart3, Settings, User } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import BackgroundOptions from "./background-options"
 import { ProfileTabContent } from "./profile-tab-content"
+import { CardTextureSelector } from "./texture-selector"
 
 
 interface ControlPanelProps {
@@ -12,6 +13,8 @@ interface ControlPanelProps {
     backgroundType: "wallpaper" | "color" | "gradient"
     backgroundColor: string
     backgroundGradient: { from: string; to: string }
+    backgroundWallpaper: string | null
+    backgroundImage: string | null
     blurAmount: number
     padding: number
     profile: {
@@ -25,6 +28,7 @@ interface ControlPanelProps {
       platform: string
       url: string
     }[]
+    cardTexture: "base" | "glassy"
   }
   onUpdate: (updates: Partial<ControlPanelProps["state"]>) => void
 }
@@ -81,6 +85,7 @@ export default function ControlPanel({ state, onUpdate }: ControlPanelProps) {
           </CardHeader>
           <CardContent>
             <BackgroundOptions state={state} onUpdate={onUpdate} />
+            <CardTextureSelector state={state} onUpdate={onUpdate} />
           </CardContent>
         </Card>
       )}

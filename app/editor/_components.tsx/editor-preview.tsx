@@ -25,6 +25,7 @@ interface PreviewProps {
       platform: string
       url: string
     }[]
+    cardTexture: "base" | "glassy"
   } 
 }
 
@@ -154,22 +155,25 @@ export default function EditorPreview({ state }: PreviewProps) {
     </div>
   </div>
 )}
-              {/* Links Sectio  n */}
+              {/* Links Section */}
               <div className="w-full space-y-4">
                 <TexturedCard
                   title="PROJECTS"
                   backgroundColor="bg-amber-500"
                   titleColor="text-black"
+                  texture={state.cardTexture}
                 />
                 <TexturedCard
                   title="READ ARTICLES"
                   backgroundColor="bg-zinc-900"
                   titleColor="text-white"
+                  texture={state.cardTexture}
                 />
                 <TexturedCard
                   title="GET IN TOUCH"
                   backgroundColor="bg-white"
                   titleColor="text-black"
+                  texture={state.cardTexture}
                 />
               </div>
             </div>

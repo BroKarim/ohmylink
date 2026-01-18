@@ -3,12 +3,15 @@
 import React, { useState } from "react"
 import { TexturedCard } from './texture-card';
 import { Icons } from '@/components/icons';
-
+import {Globe} from "lucide-react"
+import { SOCIAL_PLATFORMS } from '@/lib/sosmed';
 interface PreviewProps {
   state: {
     backgroundType: string
     backgroundColor: string
     backgroundGradient: { from: string; to: string }
+    backgroundWallpaper: string | null
+    backgroundImage: string | null
     blurAmount: number
     padding: number
     profile: {
@@ -17,6 +20,11 @@ interface PreviewProps {
       avatar: string | null
     }
     profileLayout: "center" | "left-stack" | "left-row"
+    socials: {
+      id: string
+      platform: string
+      url: string
+    }[]
   } 
 }
 
@@ -24,15 +32,25 @@ export default function EditorPreview({ state }: PreviewProps) {
   const [viewMode, setViewMode] = useState<"mobile" | "desktop">("mobile")
   
   const getBackgroundStyle = () => {
-    if (state.backgroundType === "gradient") {
-      return {
-        background: `linear-gradient(135deg, ${state.backgroundGradient.from} 0%, ${state.backgroundGradient.to} 100%)`,
+  switch (state.backgroundType) {
+    case "gradient":
+      return { background: `linear-gradient(135deg, ${state.backgroundGradient.from} 0%, ${state.backgroundGradient.to} 100%)` }
+    case "wallpaper":
+      return { 
+        backgroundImage: `url(${state.backgroundWallpaper})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
       }
-    }
-    return {
-      backgroundColor: state.backgroundColor,
-    }
+    case "image":
+      return { 
+        backgroundImage: `url(${state.backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }
+    default:
+      return { backgroundColor: state.backgroundColor }
   }
+}
 
   return (
    <div className="flex flex-1 flex-col gap-4 overflow-hidden">
@@ -85,7 +103,7 @@ export default function EditorPreview({ state }: PreviewProps) {
             <div className="mx-auto flex w-full max-w-[420px] flex-col items-center pb-10 pt-12">
               {/* Profile Section */}
               <div 
-  className={`mb-8 flex w-full gap-4 transition-all duration-300 ${
+                className={`mb-8 flex w-full gap-4 transition-all duration-300 ${
     state.profileLayout === "center" 
       ? "flex-col items-center text-center" 
       : state.profileLayout === "left-stack"
@@ -113,7 +131,29 @@ export default function EditorPreview({ state }: PreviewProps) {
       {state.profile.description || "Add your bio here"}
     </p>
   </div>
-</div>
+              </div>
+              {/* Social Media Horizontal Scroll */}
+{state.socials && state.socials.length > 0 && (
+  <div className="mb-8 w-full">
+    <div className="no-scrollbar flex w-full flex-row items-center justify-center gap-4 overflow-x-auto pb-2">
+      {state.socials.map((social: any) => {
+        const platform = SOCIAL_PLATFORMS.find(p => p.id === social.platform)
+        const Icon = platform?.icon || Globe
+        
+        return (
+          <a
+            key={social.id}
+            href={social.url}
+            target="_blank"
+            className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md transition-transform hover:scale-110 active:scale-95 border border-white/10"
+          >
+            <Icon className="h-5 w-5" />
+          </a>
+        )
+      })}
+    </div>
+  </div>
+)}
               {/* Links Sectio  n */}
               <div className="w-full space-y-4">
                 <TexturedCard

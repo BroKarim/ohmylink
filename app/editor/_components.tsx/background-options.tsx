@@ -2,6 +2,9 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Upload, Image as ImageIcon } from "lucide-react"
+import { Button } from "@/components/ui/button" 
 
 const GRADIENT_PRESETS = [
   { name: "Blue to Pink", from: "#4f46e5", to: "#ec4899" },
@@ -13,124 +16,128 @@ const GRADIENT_PRESETS = [
 
 const COLORS = ["#1a1a1a", "#2d2d2d", "#3f3f3f", "#4f4f4f", "#1e293b", "#334155"]
 
+const WALLPAPER_PRESETS = [
+  "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400",
+  "https://images.unsplash.com/photo-1634128221889-82ed6efebfc3?q=80&w=400",
+  "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=400",
+  "https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=400",
+  "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=400",
+  "https://images.unsplash.com/photo-1506318137071-a8e063b4bcc0?q=80&w=400",
+]
+
 interface BackgroundOptionsProps {
   state: {
     backgroundType: "wallpaper" | "color" | "gradient"
     backgroundColor: string
     backgroundGradient: { from: string; to: string }
+    backgroundWallpaper: string | null
+    backgroundImage: string | null
   }
   onUpdate: (
     updates: Partial<{
       backgroundType: "wallpaper" | "color" | "gradient"
       backgroundColor: string
       backgroundGradient: { from: string; to: string }
+      backgroundWallpaper: string | null
+      backgroundImage: string | null
     }>,
   ) => void
 }
 
 export default function BackgroundOptions({ state, onUpdate }: BackgroundOptionsProps) {
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        onUpdate({ backgroundImage: reader.result as string })
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+  
   return (
-    <Tabs value={state.backgroundType} onValueChange={(value) => onUpdate({ backgroundType: value as any })}>
-      <TabsList className="grid w-full grid-cols-2">
+    <Tabs value={state.backgroundType} onValueChange={(v) => onUpdate({ backgroundType: v })}>
+      <TabsList className="grid w-full grid-cols-4">
         <TabsTrigger value="color">Color</TabsTrigger>
-        <TabsTrigger value="gradient">Gradient</TabsTrigger>
+        <TabsTrigger value="gradient">Grad</TabsTrigger>
+        <TabsTrigger value="wallpaper">Wall</TabsTrigger>
+        <TabsTrigger value="image">Img</TabsTrigger>
       </TabsList>
 
-      <TabsContent value="color" className="space-y-4">
+      {/* Existing Color Content */}
+      <TabsContent value="color" className="space-y-4 pt-4">
         <div className="grid grid-cols-3 gap-2">
-          {COLORS.map((color) => (
+          {["#1a1a1a", "#2d2d2d", "#3f3f3f", "#4f4f4f", "#1e293b", "#334155"].map((color) => (
             <button
               key={color}
               onClick={() => onUpdate({ backgroundColor: color })}
-              className={`h-10 rounded-lg border-2 transition-all ${
-                state.backgroundColor === color ? "border-primary shadow-lg" : "border-transparent"
-              }`}
+              className={`h-10 rounded-lg border-2 transition-all ${state.backgroundColor === color ? "border-primary" : "border-transparent"}`}
               style={{ backgroundColor: color }}
-              title={color}
             />
           ))}
         </div>
-        <div className="flex gap-2">
-          <span className="text-xs text-muted-foreground">Custom:</span>
-          <Input
-            type="color"
-            value={state.backgroundColor}
-            onChange={(e) => onUpdate({ backgroundColor: e.target.value })}
-            className="h-8 w-12 cursor-pointer"
-          />
+        <div className="flex items-center gap-2">
+          <Input type="color" value={state.backgroundColor} onChange={(e) => onUpdate({ backgroundColor: e.target.value })} className="h-8 w-12 cursor-pointer" />
+          <span className="text-xs text-muted-foreground">Custom Color</span>
         </div>
       </TabsContent>
 
-      <TabsContent value="gradient" className="space-y-4">
-        <div className="space-y-3">
-          {GRADIENT_PRESETS.map((preset) => (
+      {/* Existing Gradient Content */}
+      <TabsContent value="gradient" className="space-y-4 pt-4">
+        <div className="grid grid-cols-1 gap-2">
+          {[
+            { from: "#4f46e5", to: "#ec4899" },
+            { from: "#f97316", to: "#dc2626" },
+            { from: "#10b981", to: "#3b82f6" },
+          ].map((g, i) => (
             <button
-              key={preset.name}
-              onClick={() => onUpdate({ backgroundGradient: { from: preset.from, to: preset.to } })}
-              className="w-full rounded-lg border-2 border-transparent p-3 text-left transition-all hover:border-primary"
-              style={{
-                background: `linear-gradient(135deg, ${preset.from} 0%, ${preset.to} 100%)`,
-              }}
+              key={i}
+              onClick={() => onUpdate({ backgroundGradient: g })}
+              className="h-10 w-full rounded-lg border-2 border-transparent"
+              style={{ background: `linear-gradient(135deg, ${g.from}, ${g.to})` }}
+            />
+          ))}
+        </div>
+      </TabsContent>
+
+      {/* NEW: Wallpaper Content */}
+      <TabsContent value="wallpaper" className="space-y-4 pt-4">
+        <div className="grid grid-cols-3 gap-2">
+          {WALLPAPER_PRESETS.map((url) => (
+            <button
+              key={url}
+              onClick={() => onUpdate({ backgroundWallpaper: url })}
+              className={`relative h-20 overflow-hidden rounded-lg border-2 transition-all ${state.backgroundWallpaper === url ? "border-primary" : "border-transparent"}`}
             >
-              <span className="text-xs font-medium text-white drop-shadow-sm">{preset.name}</span>
+              <img src={url} className="h-full w-full object-cover" alt="preset" />
             </button>
           ))}
         </div>
+      </TabsContent>
 
-        <div className="space-y-3 border-t border-border pt-3">
-          <div className="space-y-2">
-            <label className="text-xs font-medium text-muted-foreground">From Color</label>
-            <div className="flex gap-2">
-              <Input
-                type="color"
-                value={state.backgroundGradient.from}
-                onChange={(e) =>
-                  onUpdate({
-                    backgroundGradient: { ...state.backgroundGradient, from: e.target.value },
-                  })
-                }
-                className="h-8 w-12 cursor-pointer"
-              />
-              <Input
-                type="text"
-                value={state.backgroundGradient.from}
-                onChange={(e) =>
-                  onUpdate({
-                    backgroundGradient: { ...state.backgroundGradient, from: e.target.value },
-                  })
-                }
-                className="text-xs"
-              />
-            </div>
+      {/* NEW: Image Upload Content */}
+      <TabsContent value="image" className="space-y-4 pt-4">
+        <div className="flex flex-col gap-4">
+          <div className="relative group flex h-32 w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-muted transition-colors hover:border-primary/50">
+            {state.backgroundImage ? (
+              <img src={state.backgroundImage} className="h-full w-full rounded-lg object-cover" alt="upload" />
+            ) : (
+              <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                <Upload className="h-6 w-6" />
+                <span className="text-xs">Upload Background</span>
+              </div>
+            )}
+            <input type="file" accept="image/*" onChange={handleImageUpload} className="absolute inset-0 cursor-pointer opacity-0" />
           </div>
-
-          <div className="space-y-2">
-            <label className="text-xs font-medium text-muted-foreground">To Color</label>
-            <div className="flex gap-2">
-              <Input
-                type="color"
-                value={state.backgroundGradient.to}
-                onChange={(e) =>
-                  onUpdate({
-                    backgroundGradient: { ...state.backgroundGradient, to: e.target.value },
-                  })
-                }
-                className="h-8 w-12 cursor-pointer"
-              />
-              <Input
-                type="text"
-                value={state.backgroundGradient.to}
-                onChange={(e) =>
-                  onUpdate({
-                    backgroundGradient: { ...state.backgroundGradient, to: e.target.value },
-                  })
-                }
-                className="text-xs"
-              />
-            </div>
-          </div>
+          {state.backgroundImage && (
+            <Button variant="outline" size="sm" onClick={() => onUpdate({ backgroundImage: null })} className="w-full text-destructive">
+              Remove Image
+            </Button>
+          )}
         </div>
       </TabsContent>
     </Tabs>
   )
 }
+

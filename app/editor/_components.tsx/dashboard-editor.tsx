@@ -9,6 +9,8 @@ interface EditorState {
   backgroundType: "wallpaper" | "color" | "gradient"
   backgroundColor: string
   backgroundGradient: { from: string; to: string }
+  backgroundWallpaper: string | null
+  backgroundImage: string | null
   blurAmount: number
   padding: number
   // New Profile Data
@@ -18,6 +20,7 @@ interface EditorState {
     avatar: string | null
   }
   profileLayout: "center" | "left-stack" | "left-row"
+  socials: Array<{ id: string; platform: string; url: string }>;
 }
 
 export default function DashboardEditor() {
@@ -25,6 +28,8 @@ export default function DashboardEditor() {
     backgroundType: "gradient",
     backgroundColor: "#1a1a1a",
     backgroundGradient: { from: "#4f46e5", to: "#ec4899" },
+    backgroundWallpaper: null,
+    backgroundImage: null,
     blurAmount: 8,
     padding: 16,
     profile: {
@@ -33,6 +38,7 @@ export default function DashboardEditor() {
       avatar: null,
     },
     profileLayout: "center",
+    socials: [],
   })
 
   const updateState = (updates: Partial<EditorState>) => {

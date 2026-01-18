@@ -4,10 +4,7 @@ import { useState } from "react"
 import { Palette, Layers, BarChart3, Settings, User } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import BackgroundOptions from "./background-options"
-import { ProfileEditor } from "./profile-editor"
-import { ProfileLayoutSelector } from "./profile-layout-selector"
-import BlurControl from "./blur-control"
-import PaddingControl from "./padding-control"
+import { ProfileTabContent } from "./profile-tab-content"
 
 
 interface ControlPanelProps {
@@ -22,7 +19,12 @@ interface ControlPanelProps {
       description: string
       avatar: string | null
     }
-    profileLayout: "center" | "left-stack" | "left-row"
+    profileLayout: "center" | "left-stack" | "left-row" 
+    socials: {
+      id: string
+      platform: string
+      url: string
+    }[]
   }
   onUpdate: (updates: Partial<ControlPanelProps["state"]>) => void
 }
@@ -65,21 +67,7 @@ export default function ControlPanel({ state, onUpdate }: ControlPanelProps) {
 
       {/* Tab Content */}
       {activeTab === "profile" && (
-        <Card className="bg-card">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <Layers className="h-4 w-4" />
-              Effects
-            </CardTitle>
-            <CardDescription>Adjust visual effects</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <ProfileEditor state={state} onUpdate={onUpdate} />
-            <ProfileLayoutSelector state={state} onUpdate={onUpdate} />
-            <BlurControl state={state} onUpdate={onUpdate} />
-            <PaddingControl state={state} onUpdate={onUpdate} />
-          </CardContent>
-        </Card>
+        <ProfileTabContent state={state} onUpdate={onUpdate} />
       )}
 
       {activeTab === "theme" && (

@@ -11,6 +11,13 @@ interface EditorState {
   backgroundGradient: { from: string; to: string }
   blurAmount: number
   padding: number
+  // New Profile Data
+  profile: {
+    name: string
+    description: string
+    avatar: string | null
+  }
+  profileLayout: "center" | "left-stack" | "left-row"
 }
 
 export default function DashboardEditor() {
@@ -20,6 +27,12 @@ export default function DashboardEditor() {
     backgroundGradient: { from: "#4f46e5", to: "#ec4899" },
     blurAmount: 8,
     padding: 16,
+    profile: {
+      name: "Brokerish",
+      description: "Design and build tools people love",
+      avatar: null,
+    },
+    profileLayout: "center",
   })
 
   const updateState = (updates: Partial<EditorState>) => {

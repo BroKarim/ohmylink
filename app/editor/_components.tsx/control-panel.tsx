@@ -4,6 +4,8 @@ import { useState } from "react"
 import { Palette, Layers, BarChart3, Settings, User } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import BackgroundOptions from "./background-options"
+import { ProfileEditor } from "./profile-editor"
+import { ProfileLayoutSelector } from "./profile-layout-selector"
 import BlurControl from "./blur-control"
 import PaddingControl from "./padding-control"
 
@@ -15,6 +17,12 @@ interface ControlPanelProps {
     backgroundGradient: { from: string; to: string }
     blurAmount: number
     padding: number
+    profile: {
+      name: string
+      description: string
+      avatar: string | null
+    }
+    profileLayout: "center" | "left-stack" | "left-row"
   }
   onUpdate: (updates: Partial<ControlPanelProps["state"]>) => void
 }
@@ -66,6 +74,8 @@ export default function ControlPanel({ state, onUpdate }: ControlPanelProps) {
             <CardDescription>Adjust visual effects</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+            <ProfileEditor state={state} onUpdate={onUpdate} />
+            <ProfileLayoutSelector state={state} onUpdate={onUpdate} />
             <BlurControl state={state} onUpdate={onUpdate} />
             <PaddingControl state={state} onUpdate={onUpdate} />
           </CardContent>

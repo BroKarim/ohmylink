@@ -1,0 +1,1 @@
+//Mengatur penambahan, penghapusan, dan urutan Link Cards

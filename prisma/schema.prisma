@@ -13,25 +13,44 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
+enum BackgroundType {
+  color
+  gradient
+  wallpaper
+  image
+}
+
+enum ProfileLayout {
+  center
+  left_stack
+  left_row
+}
+
+enum CardTexture {
+  base
+  glassy
+}
+
 model User {
-  id            String          @id
+  id            String    @id
   name          String
-  email         String
-  emailVerified Boolean         @default(false)
+  email         String    @unique
   image         String?
-  username      String?         @unique
-  bio           String?
-  avatarUrl     String?
-  isOnboarded   Boolean         @default(false)
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  username      String?   @unique
+  isOnboarded   Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  role          Role      @default(USER)
   sessions      Session[]
   accounts      Account[]
   profile       Profile?
-  collections   Collection[]
-  collectionVotes CollectionVote[]
 
-  @@unique([email])
   @@map("user")
 }
 
@@ -85,17 +104,51 @@ model Verification {
 
 model Profile {
   id          String   @id @default(cuid())
+  slug        String? @unique
   userId      String   @unique
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title       String?
-  theme       String   @default("default")
-  isPublished Boolean  @default(false)
-  calLink     String?
+  // --- Profile Info ---
+  displayName String?
+  bio         String?
+  avatarUrl   String?
+  layout      ProfileLayout @default(center)
+
+  // --- Background Settings ---
+  bgType      BackgroundType @default(color)
+  bgColor     String         @default("#1a1a1a")
+  bgGradientFrom String?
+  bgGradientTo   String?
+  bgWallpaper    String?     
+  bgImage        String?     
+  
+  // --- Design & Effects ---
+  blurAmount  Int            @default(0)
+  padding     Int            @default(16)
+  cardTexture CardTexture    @default(base)
+  
+  bgEffects   Json?          
+  
+  // --- Relations ---
+  socials     SocialLink[]
   links       Link[]
+  
+  isPublished Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@map("profile")
+  @@index([userId])
+}
+
+model SocialLink {
+  id        String   @id @default(cuid())
+  profileId String
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  platform  String   // x, instagram, github, dll
+  url       String
+  position  Int      @default(0)
+
+  @@map("social_link")
 }
 
 model Link {
@@ -105,9 +158,11 @@ model Link {
   title             String
   url               String
   icon              String?
-  previewImageUrl   String?
-  previewDescription String?
-  position          Int
+  description     String?
+  imageUrl        String?
+  videoUrl        String?
+  isStripeEnabled Boolean       @default(false)
+  position          Int         @default(0)
   isActive          Boolean     @default(true)
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
@@ -148,65 +203,8 @@ model LinkClick {
   @@map("link_click")
 }
 
-enum CollectionCategory {
-  UI_LIBRARY
-  RESOURCES
-  SITES
-  TOOLS
-  OTHER
-}
 
-enum VoteType {
-  UP
-  DOWN
-}
 
-model Collection {
-  id          String           @id @default(cuid())
-  userId      String
-  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title       String
-  description String?
-  category    CollectionCategory @default(OTHER)
-  links       CollectionLink[]
-  votes       CollectionVote[]
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
 
-  @@index([userId])
-  @@index([category])
-  @@index([createdAt])
-  @@map("collection")
-}
 
-model CollectionLink {
-  id                String     @id @default(cuid())
-  collectionId      String
-  collection        Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
-  title             String
-  url               String
-  icon              String?
-  previewImageUrl   String?
-  previewDescription String?
-  position          Int
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @updatedAt
 
-  @@index([collectionId])
-  @@map("collection_link")
-}
-
-model CollectionVote {
-  id          String     @id @default(cuid())
-  collectionId String
-  collection  Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
-  userId      String
-  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  voteType    VoteType
-  createdAt   DateTime   @default(now())
-
-  @@unique([collectionId, userId])
-  @@index([collectionId])
-  @@index([userId])
-  @@map("collection_vote")
-}

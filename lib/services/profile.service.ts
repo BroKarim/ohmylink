@@ -94,8 +94,12 @@ export const profileService = {
       },
       select: {
         username: true,
-        avatarUrl: true,
         image: true,
+        profile: {
+        select: {
+          avatarUrl: true, // Field yang baru dipindah ke Profile
+        }
+      }
       },
       ...(limit ? { take: limit } : {}),
       ...(offset ? { skip: offset } : {}),

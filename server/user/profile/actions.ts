@@ -1,13 +1,16 @@
 "use server"
 
 import {db} from "@/lib/db";
-import { auth } from "@/lib/auth"; // Asumsi path auth kamu
+import { auth } from "@/lib/auth"; 
 import { ProfileSchema, ProfileInput } from "./schema";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
 export async function updateProfile(data: ProfileInput) {
   try {
-    const session = await auth();
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
     if (!session?.user) throw new Error("Unauthorized");
 
     // 1. Validasi input menggunakan Zod

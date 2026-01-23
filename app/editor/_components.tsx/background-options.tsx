@@ -2,19 +2,9 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Upload, Image as ImageIcon } from "lucide-react"
 import { Button } from "@/components/ui/button" 
-
-const GRADIENT_PRESETS = [
-  { name: "Blue to Pink", from: "#4f46e5", to: "#ec4899" },
-  { name: "Orange to Red", from: "#f97316", to: "#dc2626" },
-  { name: "Green to Blue", from: "#10b981", to: "#3b82f6" },
-  { name: "Purple to Violet", from: "#a855f7", to: "#6d28d9" },
-  { name: "Teal to Cyan", from: "#14b8a6", to: "#06b6d4" },
-]
-
-const COLORS = ["#1a1a1a", "#2d2d2d", "#3f3f3f", "#4f4f4f", "#1e293b", "#334155"]
+import { EditorState } from "@/lib/editor"
 
 const WALLPAPER_PRESETS = [
   "https://images.unsplash.com/photo-1765498069280-b863094c17bf?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -26,22 +16,8 @@ const WALLPAPER_PRESETS = [
 ]
 
 interface BackgroundOptionsProps {
-  state: {
-    backgroundType: "wallpaper" | "color" | "gradient"
-    backgroundColor: string
-    backgroundGradient: { from: string; to: string }
-    backgroundWallpaper: string | null
-    backgroundImage: string | null
-  }
-  onUpdate: (
-    updates: Partial<{
-      backgroundType: "wallpaper" | "color" | "gradient"
-      backgroundColor: string
-      backgroundGradient: { from: string; to: string }
-      backgroundWallpaper: string | null
-      backgroundImage: string | null
-    }>,
-  ) => void
+  state: Pick<EditorState, "backgroundType" | "backgroundColor" | "backgroundGradient" | "backgroundWallpaper" | "backgroundImage">
+  onUpdate: (updates: Partial<EditorState>) => void
 }
 
 export default function BackgroundOptions({ state, onUpdate }: BackgroundOptionsProps) {

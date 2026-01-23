@@ -6,31 +6,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import BackgroundOptions from "./background-options"
 import { ProfileTabContent } from "./profile-tab-content"
 import { CardTextureSelector } from "./texture-selector"
+import { EditorState } from "@/lib/editor"
 
 
 interface ControlPanelProps {
-  state: {
-    backgroundType: "wallpaper" | "color" | "gradient"
-    backgroundColor: string
-    backgroundGradient: { from: string; to: string }
-    backgroundWallpaper: string | null
-    backgroundImage: string | null
-    blurAmount: number
-    padding: number
-    profile: {
-      name: string
-      description: string
-      avatar: string | null
-    }
-    profileLayout: "center" | "left-stack" | "left-row" 
-    socials: {
-      id: string
-      platform: string
-      url: string
-    }[]
-    cardTexture: "base" | "glassy"
-  }
-  onUpdate: (updates: Partial<ControlPanelProps["state"]>) => void
+  state: EditorState
+  onUpdate: (updates: Partial<EditorState>) => void
 }
 
 type TabType = "profile" | "theme" | "analytic" | "setting"

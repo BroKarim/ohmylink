@@ -5,28 +5,10 @@ import { TexturedCard } from './texture-card';
 import { Icons } from '@/components/icons';
 import {Globe} from "lucide-react"
 import { SOCIAL_PLATFORMS } from '@/lib/sosmed';
+import { EditorState, LinkItem } from "@/lib/editor"
+
 interface PreviewProps {
-  state: {
-    backgroundType: string
-    backgroundColor: string
-    backgroundGradient: { from: string; to: string }
-    backgroundWallpaper: string | null
-    backgroundImage: string | null
-    blurAmount: number
-    padding: number
-    profile: {
-      name: string
-      description: string
-      avatar: string | null
-    }
-    profileLayout: "center" | "left-stack" | "left-row"
-    socials: {
-      id: string
-      platform: string
-      url: string
-    }[]
-    cardTexture: "base" | "glassy"
-  } 
+  state: EditorState
 }
 
 export default function EditorPreview({ state }: PreviewProps) {
@@ -85,16 +67,39 @@ export default function EditorPreview({ state }: PreviewProps) {
 
       {/* Preview Container */}
       <div className="relative flex flex-1 items-center justify-center overflow-hidden rounded-2xl border border-dashed border-border bg-zinc-50/50 p-4 dark:bg-zinc-900/50">
+       
+       
         <div
           className={`relative transition-all duration-500 ease-in-out overflow-hidden shadow-2xl ${
             viewMode === "mobile"
               ? "aspect-9/19 w-full max-w-[360px] rounded-[2.5rem] border-4 border-zinc-950"
               : "h-full w-full rounded-xl border-border border"
           }`}
-          style={{ ...getBackgroundStyle() }}
+         
         >
-          {/* Background Blur Overlay */}
+    <div 
+    className="absolute inset-0 transition-all duration-500"
+    style={{ 
+      ...getBackgroundStyle(),
+      filter: `
+        blur(${state.bgEffects.blur}px) 
+        brightness(${state.bgEffects.brightness}%) 
+        saturate(${state.bgEffects.saturation}%) 
+        contrast(${state.bgEffects.contrast}%)
+      `,
+      transform: state.bgEffects.blur > 0 ? 'scale(1.1)' : 'scale(1)' // Prevent white edges when blurring
+    }}
+  />
           
+          {/* Layer 2: Grain / Noise Overlay */}
+  <div 
+    className="absolute inset-0 pointer-events-none mix-blend-overlay"
+    style={{ 
+      opacity: state.bgEffects.noise / 100,
+      backgroundImage: `url('https://grainy-gradients.vercel.app/noise.svg')`,
+      filter: 'contrast(150%) brightness(100%)'
+    }}
+  />
 
           {/* Content Scroll Area */}
           <div
@@ -157,24 +162,32 @@ export default function EditorPreview({ state }: PreviewProps) {
 )}
               {/* Links Section */}
               <div className="w-full space-y-4">
-                <TexturedCard
-                  title="PROJECTS"
-                  backgroundColor="bg-amber-500"
-                  titleColor="text-black"
-                  texture={state.cardTexture}
-                />
-                <TexturedCard
-                  title="READ ARTICLES"
-                  backgroundColor="bg-zinc-900"
-                  titleColor="text-white"
-                  texture={state.cardTexture}
-                />
-                <TexturedCard
-                  title="GET IN TOUCH"
-                  backgroundColor="bg-white"
-                  titleColor="text-black"
-                  texture={state.cardTexture}
-                />
+                {state.links && state.links.length > 0 ? (
+                  state.links.map((link: LinkItem) => (
+                    <TexturedCard
+                      key={link.id}
+                      title={link.title.toUpperCase()}
+                      url={link.url}
+                      description={link.description}
+                      imageUrl={link.imageUrl}
+                      videoUrl={link.videoUrl}
+                      isStripeEnabled={link.isStripeEnabled}
+                      backgroundColor={link.backgroundColor || "bg-amber-500"}
+                      titleColor="text-white"
+                      texture={state.cardTexture}
+                    />
+                  ))
+                ) : (
+                  // Placeholder cards when no links added
+                  <>
+                    <TexturedCard
+                      title="ADD YOUR FIRST LINK"
+                      backgroundColor="bg-zinc-800"
+                      titleColor="text-white"
+                      texture={state.cardTexture}
+                    />
+                  </>
+                )}
               </div>
             </div>
           </div>

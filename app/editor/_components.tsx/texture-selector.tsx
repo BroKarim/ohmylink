@@ -17,7 +17,7 @@ export function CardTextureSelector({ state, onUpdate }: any) {
             <button
               key={t.id}
               onClick={() => onUpdate({ cardTexture: t.id })}
-              className={`flex flex-col items-center justify-center gap-2 rounded-xl border-2 p-4 transition-all ${
+              className={`flex flex-col items-center justify-center gap-2  border-2 p-4 transition-all ${
                 state.cardTexture === t.id
                   ? "border-primary bg-primary/5 text-primary"
                   : "border-muted bg-transparent text-muted-foreground hover:border-border"

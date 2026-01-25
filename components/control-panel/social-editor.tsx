@@ -1,4 +1,6 @@
-import { Plus, Trash2, Edit2 } from "lucide-react";
+"use client";
+
+import { Plus, Trash2, Edit2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Globe } from "lucide-react";
@@ -8,6 +10,8 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { ProfileEditorData } from "@/server/user/profile/payloads";
+import { createSocialLink, updateSocialLink, deleteSocialLink } from "@/server/user/links/actions";
+import { toast } from "sonner";
 
 interface SocialMediaEditorProps {
   profile: ProfileEditorData;
@@ -20,6 +24,7 @@ export function SocialMediaEditor({ profile, onUpdate }: SocialMediaEditorProps)
   const [selectedPlatform, setSelectedPlatform] = useState<string>("");
   const [url, setUrl] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   const resetForm = () => {
     setEditingId(null);
@@ -36,24 +41,64 @@ export function SocialMediaEditor({ profile, onUpdate }: SocialMediaEditorProps)
     setIsOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!selectedPlatform) return;
 
-    if (editingId) {
-      const updated = profile.socials.map((s: any) => (s.id === editingId ? { ...s, platform: selectedPlatform, url } : s));
-      onUpdate({ ...profile, socials: updated });
-    } else {
-      const newSocial = { id: Math.random().toString(36).substr(2, 9), platform: selectedPlatform, url, position: profile.socials.length };
-      onUpdate({ ...profile, socials: [...(profile.socials || []), newSocial] });
+    setIsSaving(true);
+    try {
+      if (editingId) {
+        const result = await updateSocialLink(editingId, {
+          platform: selectedPlatform,
+          url,
+          position: profile.socials.findIndex((s) => s.id === editingId),
+        });
+
+        if (result.success) {
+          const updatedSocials = profile.socials.map((s) => (s.id === editingId ? { ...s, platform: selectedPlatform, url } : s));
+          onUpdate({ ...profile, socials: updatedSocials });
+          toast.success("Social link updated!");
+        } else {
+          toast.error(result.error || "Failed to update");
+        }
+      } else {
+        const result = await createSocialLink({
+          platform: selectedPlatform,
+          url,
+          position: profile.socials.length,
+        });
+
+        if (result.success && result.data) {
+          onUpdate({ ...profile, socials: [...profile.socials, result.data] });
+          toast.success("Social link added!");
+        } else {
+          toast.error(result.error || "Failed to add");
+        }
+      }
+      resetForm();
+    } catch (error) {
+      console.error(error);
+      toast.error("Error saving social link");
+    } finally {
+      setIsSaving(false);
     }
-    resetForm();
   };
 
-  const removeSocial = (id: string) => {
-    onUpdate({ ...profile, socials: profile.socials.filter((s: any) => s.id !== id) });
+  const removeSocial = async (id: string) => {
+    try {
+      const result = await deleteSocialLink(id);
+
+      if (result.success) {
+        onUpdate({ ...profile, socials: profile.socials.filter((s) => s.id !== id) });
+        toast.success("Social link removed!");
+      } else {
+        toast.error(result.error || "Failed to delete");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error deleting social link");
+    }
   };
 
-  // Filter platforms based on search
   const filteredPlatforms = SOCIAL_PLATFORMS.filter((p) => p.label.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
@@ -77,10 +122,8 @@ export function SocialMediaEditor({ profile, onUpdate }: SocialMediaEditorProps)
             <div className="space-y-3">
               <Label>Select Platform</Label>
 
-              {/* Search Input */}
               <Input placeholder="Search platform..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="mb-2" />
 
-              {/* Platform Grid */}
               <ScrollArea className="h-[240px] rounded-md border p-2">
                 <div className="grid grid-cols-2 gap-2">
                   {filteredPlatforms.length > 0 ? (
@@ -114,17 +157,17 @@ export function SocialMediaEditor({ profile, onUpdate }: SocialMediaEditorProps)
           </div>
 
           <DialogFooter>
-            <Button variant="ghost" type="button" onClick={resetForm}>
+            <Button variant="ghost" type="button" onClick={resetForm} disabled={isSaving}>
               Cancel
             </Button>
-            <Button onClick={handleSave} disabled={!selectedPlatform}>
+            <Button onClick={handleSave} disabled={!selectedPlatform || isSaving}>
+              {isSaving && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
               {editingId ? "Update Link" : "Add to Profile"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Social List Cards */}
       <div className="grid gap-2">
         {profile.socials?.map((social: any) => {
           const platform = SOCIAL_PLATFORMS.find((p) => p.id === social.platform);

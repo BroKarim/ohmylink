@@ -7,6 +7,7 @@ import { ProfileSchema, ProfileInput } from "./schema";
 import { profileEditorPayload } from "./payloads";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
+import { ProfileLayout } from "@/lib/generated/prisma/enums";
 
 export async function updateProfile(data: ProfileInput) {
   try {
@@ -33,6 +34,32 @@ export async function updateProfile(data: ProfileInput) {
   } catch (error) {
     console.error("Failed to update profile:", error);
     return { success: false, error: "Failed to update profile" };
+  }
+}
+
+export async function updateLayout(layout: ProfileLayout) {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session?.user) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    const updatedProfile = await db.profile.update({
+      where: { userId: session.user.id },
+      data: { layout },
+      select: profileEditorPayload,
+    });
+
+    revalidatePath("/dashboard");
+    revalidatePath(`/${session.user.username}`);
+
+    return { success: true, data: updatedProfile };
+  } catch (error) {
+    console.error("Failed to update layout:", error);
+    return { success: false, error: "Failed to update layout" };
   }
 }
 

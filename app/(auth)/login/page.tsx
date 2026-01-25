@@ -18,7 +18,7 @@ function LoginContent() {
         const { isOnboarded, username } = await getOnboardingStatus();
 
         if (!isOnboarded || !username) {
-          router.push("/onboarding/username");
+          router.push("/new");
         } else {
           router.push(`/editor/${username}`);
         }

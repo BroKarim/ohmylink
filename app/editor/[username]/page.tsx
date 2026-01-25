@@ -5,11 +5,11 @@ import { headers } from "next/headers";
 import EditorClient from "../_components.tsx/editor-client";
 import { profileEditorPayload } from "@/server/user/profile/payloads";
 
-export default async function EditorPage({ params }: { params: { username: string } }) {
+export default async function EditorPage({ params }: { params: Promise<{ username: string }> }) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-  const { username } = params;
+  const { username } = await params;
 
   if (!session?.user) redirect("/login");
 

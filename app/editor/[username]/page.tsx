@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { notFound, redirect } from "next/navigation";
 import { headers } from "next/headers";
 import EditorClient from "../_components.tsx/editor-client";
+import { profileEditorPayload } from "@/server/user/profile/payloads";
 
 export default async function EditorPage({ params }: { params: { username: string } }) {
   const session = await auth.api.getSession({
@@ -16,10 +17,7 @@ export default async function EditorPage({ params }: { params: { username: strin
     where: {
       user: { username: username },
     },
-    include: {
-      socials: true,
-      links: { orderBy: { position: "asc" } },
-    },
+    select: profileEditorPayload,
   });
 
   if (!profile) notFound();
@@ -27,5 +25,5 @@ export default async function EditorPage({ params }: { params: { username: strin
   if (profile.userId !== session.user.id) {
     redirect("/dashboard");
   }
-  return <EditorClient initialData={profile} />;
+  return <EditorClient initialProfile={profile} />;
 }

@@ -3,14 +3,14 @@ import { ProfileEditor } from "@/components/control-panel/profile-editor"
 import { SocialMediaEditor } from "@/components/control-panel/social-editor"
 import { ProfileLayoutSelector } from "@/components/control-panel/profile-layout-selector"
 import { LinkCardEditor } from "@/components/control-panel/link-card-editor"
-import { EditorState } from "@/lib/editor"
+import type { ProfileEditorData } from "@/server/user/profile/payloads";
 
 interface ProfileTabProps {
-  state: EditorState
-  onUpdate: (updates: Partial<EditorState>) => void
+  profile: ProfileEditorData
+  onUpdate: (profile: ProfileEditorData) => void
 }
 
-export function ProfileTab({ state, onUpdate }: ProfileTabProps) {
+export function ProfileTab({ profile, onUpdate }: ProfileTabProps) {
   return (
     <Accordion  className="w-full space-y-4 border-none">
       <AccordionItem value="profile-info" className="border rounded-xl bg-card px-4">
@@ -18,7 +18,7 @@ export function ProfileTab({ state, onUpdate }: ProfileTabProps) {
           Profile Information
         </AccordionTrigger>
         <AccordionContent className="pb-6">
-          <ProfileEditor state={state} onUpdate={onUpdate} />
+          <ProfileEditor profile={profile} onUpdate={onUpdate} />
         </AccordionContent>
       </AccordionItem>
 
@@ -27,7 +27,7 @@ export function ProfileTab({ state, onUpdate }: ProfileTabProps) {
           Layout & Alignment
         </AccordionTrigger>
         <AccordionContent className="pb-6">
-          <ProfileLayoutSelector state={state} onUpdate={onUpdate} />
+          <ProfileLayoutSelector profile={profile} onUpdate={onUpdate} />
         </AccordionContent>
       </AccordionItem>
 
@@ -36,7 +36,7 @@ export function ProfileTab({ state, onUpdate }: ProfileTabProps) {
           Social Links
         </AccordionTrigger>
         <AccordionContent className="pb-6">
-          <SocialMediaEditor state={state} onUpdate={onUpdate} />
+          <SocialMediaEditor profile={profile} onUpdate={onUpdate} />
         </AccordionContent>
       </AccordionItem>
       

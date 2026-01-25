@@ -1,18 +1,18 @@
-import React from "react"
-import { TexturedCard } from "@/components/texture-card"
-import { EditorState, LinkItem } from "@/lib/editor"
+import React from "react";
+import { TexturedCard } from "@/components/texture-card";
+import type { ProfileEditorData } from "@/server/user/profile/payloads";
 
 interface PreviewLinksProps {
-  state: EditorState
+  profile: ProfileEditorData;
 }
 
-export function PreviewLinks({ state }: PreviewLinksProps) {
-  const { links, cardTexture } = state
+export function PreviewLinks({ profile }: PreviewLinksProps) {
+  const { links, cardTexture } = profile;
 
   return (
     <div className="w-full space-y-4">
       {links && links.length > 0 ? (
-        links.map((link: LinkItem) => (
+        links.map((link) => (
           <TexturedCard
             key={link.id}
             title={link.title.toUpperCase()}
@@ -27,13 +27,8 @@ export function PreviewLinks({ state }: PreviewLinksProps) {
           />
         ))
       ) : (
-        <TexturedCard
-          title="ADD YOUR FIRST LINK"
-          backgroundColor="bg-zinc-800"
-          titleColor="text-white"
-          texture={cardTexture}
-        />
+        <TexturedCard title="ADD YOUR FIRST LINK" backgroundColor="bg-zinc-800" titleColor="text-white" texture={cardTexture} />
       )}
     </div>
-  )
+  );
 }

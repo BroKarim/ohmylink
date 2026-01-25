@@ -1,56 +1,56 @@
-import React from "react"
-import { EditorState } from "@/lib/editor"
+
+import type { ProfileEditorData } from "@/server/user/profile/payloads";
 
 interface PreviewBackgroundProps {
-  state: EditorState
+  profile: ProfileEditorData;
 }
 
-export function PreviewBackground({ state }: PreviewBackgroundProps) {
+export function PreviewBackground({ profile }: PreviewBackgroundProps) {
   const getBackgroundStyle = () => {
-    switch (state.backgroundType) {
+    switch (profile.bgType) {
       case "gradient":
-        return { background: `linear-gradient(135deg, ${state.backgroundGradient.from} 0%, ${state.backgroundGradient.to} 100%)` }
+        return { background: `linear-gradient(135deg, ${profile.bgGradientFrom} 0%, ${profile.bgGradientTo} 100%)` };
       case "wallpaper":
-        return { 
-          backgroundImage: `url(${state.backgroundWallpaper})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }
+        return {
+          backgroundImage: `url(${profile.bgWallpaper})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        };
       case "image":
-        return { 
-          backgroundImage: `url(${state.backgroundImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }
+        return {
+          backgroundImage: `url(${profile.bgImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        };
       default:
-        return { backgroundColor: state.backgroundColor }
+        return { backgroundColor: profile.bgColor };
     }
-  }
+  };
 
   return (
     <>
-      <div 
+      <div
         className="absolute inset-0 transition-all duration-500"
-        style={{ 
+        style={{
           ...getBackgroundStyle(),
           filter: `
-            blur(${state.bgEffects.blur}px) 
-            brightness(${state.bgEffects.brightness}%) 
-            saturate(${state.bgEffects.saturation}%) 
-            contrast(${state.bgEffects.contrast}%)
+            blur(${profile.bgEffects.blur}px) 
+            brightness(${profile.bgEffects.brightness}%) 
+            saturate(${profile.bgEffects.saturation}%) 
+            contrast(${profile.bgEffects.contrast}%)
           `,
-          transform: state.bgEffects.blur > 0 ? 'scale(1.1)' : 'scale(1)'
+          transform: profile.bgEffects.blur > 0 ? "scale(1.1)" : "scale(1)",
         }}
       />
-      
-      <div 
+
+      <div
         className="absolute inset-0 pointer-events-none mix-blend-overlay"
-        style={{ 
-          opacity: state.bgEffects.noise / 100,
+        style={{
+          opacity: profile.bgEffects.noise / 100,
           backgroundImage: `url('https://grainy-gradients.vercel.app/noise.svg')`,
-          filter: 'contrast(150%) brightness(100%)'
+          filter: "contrast(150%) brightness(100%)",
         }}
       />
     </>
-  )
+  );
 }

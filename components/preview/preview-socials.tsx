@@ -1,22 +1,22 @@
-import React from "react"
-import { Globe } from "lucide-react"
-import { SOCIAL_PLATFORMS } from '@/lib/sosmed'
-import { EditorState } from "@/lib/editor"
+import React from "react";
+import { Globe } from "lucide-react";
+import { SOCIAL_PLATFORMS } from "@/lib/sosmed";
+import type { ProfileEditorData } from "@/server/user/profile/payloads";
 
 interface PreviewSocialsProps {
-  state: EditorState
+  profile: ProfileEditorData;
 }
 
-export function PreviewSocials({ state }: PreviewSocialsProps) {
-  if (!state.socials || state.socials.length === 0) return null
+export function PreviewSocials({ profile }: PreviewSocialsProps) {
+  if (!profile.socials || profile.socials.length === 0) return null;
 
   return (
     <div className="mb-8 w-full">
       <div className="no-scrollbar flex w-full flex-row items-center justify-center gap-4 overflow-x-auto pb-2">
-        {state.socials.map((social) => {
-          const platform = SOCIAL_PLATFORMS.find(p => p.id === social.platform)
-          const Icon = platform?.icon || Globe
-          
+        {profile.socials.map((social) => {
+          const platform = SOCIAL_PLATFORMS.find((p) => p.id === social.platform);
+          const Icon = platform?.icon || Globe;
+
           return (
             <a
               key={social.id}
@@ -27,9 +27,9 @@ export function PreviewSocials({ state }: PreviewSocialsProps) {
             >
               <Icon className="h-5 w-5" />
             </a>
-          )
+          );
         })}
       </div>
     </div>
-  )
+  );
 }

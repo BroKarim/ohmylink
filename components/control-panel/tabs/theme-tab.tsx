@@ -1,16 +1,16 @@
-import { Palette } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import BackgroundOptions from "@/components/control-panel/background-options"
-import BackgroundEffect from "@/components/control-panel/background-effect"
-import { CardTextureSelector } from "@/components/control-panel/texture-selector"
-import { EditorState } from "@/lib/editor"
+import { Palette } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import BackgroundOptions from "@/components/control-panel/background-options";
+import BackgroundEffect from "@/components/control-panel/background-effect";
+import { CardTextureSelector } from "@/components/control-panel/texture-selector";
+import type { ProfileEditorData } from "@/server/user/profile/payloads";
 
 interface ThemeTabProps {
-  state: EditorState
-  onUpdate: (updates: Partial<EditorState>) => void
+  profile: ProfileEditorData;
+  onUpdate: (profile: ProfileEditorData) => void;
 }
 
-export function ThemeTab({ state, onUpdate }: ThemeTabProps) {
+export function ThemeTab({ profile, onUpdate }: ThemeTabProps) {
   return (
     <Card className="bg-card">
       <CardHeader>
@@ -21,13 +21,10 @@ export function ThemeTab({ state, onUpdate }: ThemeTabProps) {
         <CardDescription>Customize the editor background</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <BackgroundOptions state={state} onUpdate={onUpdate} />
-        <BackgroundEffect 
-          state={state.bgEffects} 
-          onUpdate={(updates) => onUpdate({ bgEffects: { ...state.bgEffects, ...updates } })} 
-        />
-        <CardTextureSelector state={state} onUpdate={onUpdate} />
+        <BackgroundOptions profile={profile} onUpdate={onUpdate} />
+        <BackgroundEffect profile={profile} onUpdate={onUpdate} />
+        <CardTextureSelector profile={profile} onUpdate={onUpdate} />
       </CardContent>
     </Card>
-  )
+  );
 }

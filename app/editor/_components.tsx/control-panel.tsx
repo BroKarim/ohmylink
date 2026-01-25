@@ -1,17 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { EditorState } from "@/lib/editor";
+import { useState } from "react";
 import { TabNavigation, TabType, ProfileTab, ThemeTab, AnalyticsTab, SettingsTab } from "@/components/control-panel";
+import type { ProfileEditorData } from "@/server/user/profile/payloads";
 
 interface ControlPanelProps {
-  state: EditorState;
-  onUpdate: (updates: Partial<EditorState>) => void;
-  profileId?: string;
-  links?: Array<{ id: string; title: string; url: string; isActive?: boolean }>;
+  profile: ProfileEditorData;
+  onUpdate: (profile: ProfileEditorData) => void;
 }
 
-export default function ControlPanel({ state, onUpdate, profileId, links = [] }: ControlPanelProps) {
+export default function ControlPanel({ profile, onUpdate }: ControlPanelProps) {
   const [activeTab, setActiveTab] = useState<TabType>("profile");
 
   return (
@@ -19,9 +17,9 @@ export default function ControlPanel({ state, onUpdate, profileId, links = [] }:
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
 
       <div className="flex-1">
-        {activeTab === "profile" && <ProfileTab state={state} onUpdate={onUpdate} />}
-        {activeTab === "theme" && <ThemeTab state={state} onUpdate={onUpdate} />}
-        {activeTab === "analytic" && <AnalyticsTab profileId={profileId} links={links} />}
+        {activeTab === "profile" && <ProfileTab profile={profile} onUpdate={onUpdate} />}
+        {activeTab === "theme" && <ThemeTab profile={profile} onUpdate={onUpdate} />}
+        {activeTab === "analytic" && <AnalyticsTab profileId={profile.id} links={profile.links} />}
         {activeTab === "setting" && <SettingsTab />}
       </div>
     </div>

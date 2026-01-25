@@ -1,21 +1,15 @@
-"use client"
+"use client";
 
-import  { useState } from "react"
-import { EditorState } from "@/lib/editor"
-import { 
-  PreviewBackground, 
-  PreviewProfile, 
-  PreviewSocials, 
-  PreviewLinks, 
-  ViewModeToggle 
-} from "@/components/preview"
+import { useState } from "react";
+import { PreviewBackground, PreviewProfile, PreviewSocials, PreviewLinks, ViewModeToggle } from "@/components/preview";
+import type { ProfileEditorData } from "@/server/user/profile/payloads";
 
 interface PreviewProps {
-  state: EditorState
+  profile: ProfileEditorData;
 }
 
-export default function Preview({ state }: PreviewProps) {
-  const [viewMode, setViewMode] = useState<"mobile" | "desktop">("mobile")
+export default function Preview({ profile }: PreviewProps) {
+  const [viewMode, setViewMode] = useState<"mobile" | "desktop">("mobile");
 
   return (
     <div className="flex flex-1 flex-col gap-4 overflow-hidden">
@@ -24,26 +18,20 @@ export default function Preview({ state }: PreviewProps) {
       <div className="relative flex flex-1 items-center justify-center overflow-hidden rounded-2xl border border-dashed border-border bg-zinc-50/50 p-4 dark:bg-zinc-900/50">
         <div
           className={`relative transition-all duration-500 ease-in-out overflow-hidden shadow-2xl ${
-            viewMode === "mobile"
-              ? "aspect-9/19 w-full max-w-[360px] rounded-[2.5rem] border-4 border-zinc-950"
-              : "h-full w-full rounded-xl border-border border"
+            viewMode === "mobile" ? "aspect-9/19 w-full max-w-[360px] rounded-[2.5rem] border-4 border-zinc-950" : "h-full w-full rounded-xl border-border border"
           }`}
         >
-          <PreviewBackground state={state} />
+          <PreviewBackground profile={profile} />
 
-          <div
-            className="relative h-full overflow-y-auto no-scrollbar"
-            style={{ padding: `${state.padding}px` }}
-          >
+          <div className="relative h-full overflow-y-auto no-scrollbar" style={{ padding: `${profile.padding}px` }}>
             <div className="mx-auto flex w-full max-w-[420px] flex-col items-center pb-10 pt-12">
-              <PreviewProfile state={state} />
-              <PreviewSocials state={state} />
-              <PreviewLinks state={state} />
+              <PreviewProfile profile={profile} />
+              <PreviewSocials profile={profile} />
+              <PreviewLinks profile={profile} />
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
-

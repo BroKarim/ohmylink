@@ -1,5 +1,3 @@
-// Mengatur desain, background, dan info dasar (name/bio)
-
 import { z } from "zod";
 import { BackgroundType, ProfileLayout, CardTexture } from "@/lib/generated/prisma/enums";
 
@@ -12,26 +10,30 @@ export const BackgroundEffectsSchema = z.object({
 });
 
 export const ProfileSchema = z.object({
-  // Profile Info
   displayName: z.string().min(1, "Name is required").max(50),
   bio: z.string().max(160).optional().nullable(),
   avatarUrl: z.string().url().optional().nullable(),
   layout: z.nativeEnum(ProfileLayout),
 
-  // Background Settings
   bgType: z.nativeEnum(BackgroundType),
   bgColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid hex color"),
-  bgGradientFrom: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/).optional().nullable(),
-  bgGradientTo: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/).optional().nullable(),
+  bgGradientFrom: z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
+    .optional()
+    .nullable(),
+  bgGradientTo: z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
+    .optional()
+    .nullable(),
   bgWallpaper: z.string().optional().nullable(),
   bgImage: z.string().optional().nullable(),
 
-  // Design & Effects
   blurAmount: z.number().min(0).max(40),
   padding: z.number().min(0).max(100),
   cardTexture: z.nativeEnum(CardTexture),
   bgEffects: BackgroundEffectsSchema,
 });
 
-// Type inference untuk digunakan di frontend/backend
 export type ProfileInput = z.infer<typeof ProfileSchema>;

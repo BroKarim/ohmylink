@@ -12,7 +12,7 @@ interface ProfileTabProps {
 
 export function ProfileTab({ profile, onUpdate }: ProfileTabProps) {
   return (
-    <Accordion className="w-full space-y-4 border-none">
+    <Accordion className="w-full space-y-4  border-none">
       <AccordionItem value="profile-info" className="border rounded-xl bg-card px-4">
         <AccordionTrigger className="hover:no-underline font-semibold">Profile Information</AccordionTrigger>
         <AccordionContent className="pb-6">

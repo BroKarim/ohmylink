@@ -1,19 +1,36 @@
-"use client"
+"use client";
 
-import { ChevronLeft, MoreVertical } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { ModeSwitcher } from "@/components/mode-switcher"
+import { MoreVertical } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { DomainView } from "@/components/domain-view";
+import { ModeSwitcher } from "@/components/mode-switcher";
+import { ProfileEditorData } from "@/server/user/profile/payloads";
 
-export default function EditorHeader() {
+interface EditorHeaderProps {
+  profile: ProfileEditorData;
+}
+
+export default function EditorHeader({ profile }: EditorHeaderProps) {
+  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "ohmylink.com").replace(/https?:\/\//, "");
+  const username = (profile as any).user?.username || profile.slug || "user";
+  const fullUrl = `${baseUrl}/${username}`;
+
   return (
-    <header className="border-b border-border bg-card px-6 py-4">
+    <header className=" backdrop-blur-md sticky top-0 z-50 px-6 py-3">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-        <Link href="/">
-        ohMyLink
-        </Link>
-          <h1 className="text-lg font-semibold text-foreground">UserName</h1>
+        <div className="flex items-center justify-center gap-4">
+          <Link href="/" className="font-bold text-xl tracking-tighter">
+            oh<span className="text-primary text-2xl">!</span>
+          </Link>
+          <DomainView
+            placeholder={fullUrl}
+            value={fullUrl}
+            buttonCopy={{
+              idle: "Copy",
+              success: "Copied!",
+            }}
+          />
         </div>
         <div className="flex items-center gap-2">
           <ModeSwitcher />
@@ -23,5 +40,5 @@ export default function EditorHeader() {
         </div>
       </div>
     </header>
-  )
+  );
 }

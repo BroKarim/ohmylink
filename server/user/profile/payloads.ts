@@ -19,6 +19,11 @@ export const profileEditorPayload = {
   cardTexture: true,
   bgEffects: true,
   isPublished: true,
+  user: {
+    select: {
+      username: true,
+    },
+  },
   socials: {
     select: {
       id: true,

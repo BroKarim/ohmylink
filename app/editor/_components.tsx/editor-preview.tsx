@@ -1,21 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { PreviewBackground, PreviewProfile, PreviewSocials, PreviewLinks, ViewModeToggle } from "@/components/preview";
+import { PreviewBackground, PreviewProfile, PreviewSocials, PreviewLinks } from "@/components/preview";
 import type { ProfileEditorData } from "@/server/user/profile/payloads";
 
 interface PreviewProps {
   profile: ProfileEditorData;
+  viewMode: "mobile" | "desktop";
 }
 
-export default function Preview({ profile }: PreviewProps) {
-  const [viewMode, setViewMode] = useState<"mobile" | "desktop">("mobile");
-
+export default function Preview({ profile, viewMode }: PreviewProps) {
   return (
     <div className="flex flex-1 flex-col gap-4 overflow-hidden">
-      <ViewModeToggle viewMode={viewMode} setViewMode={setViewMode} />
-
-      <div className="relative flex flex-1 items-center justify-center overflow-hidden rounded-2xl border border-dashed border-border bg-muted/50 p-4">
+      <div className="relative flex flex-1 items-center justify-center overflow-hidden rounded-2xl border border-dashed border-border bg-card/50 p-4">
         <div
           className={`relative transition-all duration-500 ease-in-out overflow-hidden shadow-2xl ${
             viewMode === "mobile" ? "aspect-9/19 w-full max-w-[360px] rounded-[2.5rem] border-4 border-zinc-950" : "h-full w-full rounded-xl border-border border"

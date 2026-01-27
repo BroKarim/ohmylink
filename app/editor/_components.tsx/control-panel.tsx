@@ -13,7 +13,7 @@ export default function ControlPanel({ profile, onUpdate }: ControlPanelProps) {
   const [activeTab, setActiveTab] = useState<TabType>("profile");
 
   return (
-    <div className="hidden w-[560px] flex-col gap-4 overflow-y-auto lg:flex no-scrollbar">
+    <div className="hidden w-[560px] flex-col gap-4 overflow-y-auto bg-card/50 rounded-2xl lg:flex no-scrollbar">
       <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
 
       <div className="flex-1">

@@ -15,7 +15,7 @@ export default function Preview({ profile }: PreviewProps) {
     <div className="flex flex-1 flex-col gap-4 overflow-hidden">
       <ViewModeToggle viewMode={viewMode} setViewMode={setViewMode} />
 
-      <div className="relative flex flex-1 items-center justify-center overflow-hidden rounded-2xl border border-dashed border-border bg-zinc-50/50 p-4 dark:bg-zinc-900/50">
+      <div className="relative flex flex-1 items-center justify-center overflow-hidden rounded-2xl border border-dashed border-border bg-muted/50 p-4">
         <div
           className={`relative transition-all duration-500 ease-in-out overflow-hidden shadow-2xl ${
             viewMode === "mobile" ? "aspect-9/19 w-full max-w-[360px] rounded-[2.5rem] border-4 border-zinc-950" : "h-full w-full rounded-xl border-border border"

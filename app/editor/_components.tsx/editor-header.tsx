@@ -3,6 +3,7 @@
 import { ChevronLeft, MoreVertical } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { ModeSwitcher } from "@/components/mode-switcher"
 
 export default function EditorHeader() {
   return (
@@ -15,6 +16,7 @@ export default function EditorHeader() {
           <h1 className="text-lg font-semibold text-foreground">UserName</h1>
         </div>
         <div className="flex items-center gap-2">
+          <ModeSwitcher />
           <Button variant="ghost" size="icon" className="h-8 w-8">
             <MoreVertical className="h-4 w-4" />
           </Button>

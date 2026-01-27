@@ -18,9 +18,9 @@ export function PreviewLinks({ profile }: PreviewLinksProps) {
             title={link.title.toUpperCase()}
             url={link.url}
             description={link.description ?? undefined}
-            imageUrl={link.imageUrl ?? undefined}
-            videoUrl={link.videoUrl ?? undefined}
-            isStripeEnabled={link.isStripeEnabled}
+            imageUrl={link.mediaType === "image" ? (link.mediaUrl ?? undefined) : undefined}
+            videoUrl={link.mediaType === "video" ? (link.mediaUrl ?? undefined) : undefined}
+            isStripeEnabled={!!link.paymentProvider}
             backgroundColor="bg-amber-500"
             titleColor="text-white"
             texture={cardTexture}

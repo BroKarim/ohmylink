@@ -153,24 +153,40 @@ model SocialLink {
 }
 
 model Link {
-  id                String      @id @default(cuid())
-  profileId         String
-  profile           Profile     @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  title             String
-  url               String
-  icon              String?
-  description     String?
-  imageUrl        String?
-  videoUrl        String?
-  isStripeEnabled Boolean       @default(false)
-  position          Int         @default(0)
-  isActive          Boolean     @default(true)
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
-  clicks            LinkClick[]
-
+  id          String   @id @default(cuid())
+  profileId   String
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  
+  title       String
+  url         String
+  icon        String?
+  description String?
+  
+  mediaUrl    String?   
+  mediaType   MediaType? 
+  
+  paymentProvider PaymentProvider? 
+  paymentAccountId String?
+  
+  position    Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  clicks      LinkClick[]
+  
   @@index([profileId])
   @@map("link")
+}
+
+enum MediaType {
+  image
+  video
+}
+
+enum PaymentProvider {
+  stripe
+  lemonsqueezy
 }
 
 model LinkClick {

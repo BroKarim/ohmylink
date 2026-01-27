@@ -1,12 +1,13 @@
+// components/control-panel/tabs/profile/profile-layout-selector.tsx
 "use client";
 
-import { AlignCenter, AlignRight, LayoutDashboard } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { AlignCenter, AlignRight, LayoutDashboard, Loader2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
-import type { ProfileEditorData } from "@/server/user/profile/payloads";
 import { ProfileLayout } from "@/lib/generated/prisma/enums";
 import { updateLayout } from "@/server/user/profile/actions";
 import { toast } from "sonner";
-import { useState } from "react";
+import type { ProfileEditorData } from "@/server/user/profile/payloads";
 
 interface ProfileLayoutSelectorProps {
   profile: ProfileEditorData;
@@ -14,7 +15,9 @@ interface ProfileLayoutSelectorProps {
 }
 
 export function ProfileLayoutSelector({ profile, onUpdate }: ProfileLayoutSelectorProps) {
-  const [isUpdating, setIsUpdating] = useState(false);
+  const [localLayout, setLocalLayout] = useState(profile.layout);
+  const [isSaving, setIsSaving] = useState(false);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const layouts = [
     { id: ProfileLayout.center, icon: AlignCenter, label: "Centered" },
@@ -22,28 +25,56 @@ export function ProfileLayoutSelector({ profile, onUpdate }: ProfileLayoutSelect
     { id: ProfileLayout.left_row, icon: LayoutDashboard, label: "Left Row" },
   ];
 
-  const handleLayoutChange = async (layout: ProfileLayout) => {
-    setIsUpdating(true);
-    try {
-      const result = await updateLayout(layout);
+  useEffect(() => {
+    if (localLayout === profile.layout) return;
 
-      if (result.success && result.data) {
-        onUpdate(result.data);
-        toast.success("Layout updated!");
-      } else {
-        toast.error(result.error || "Failed to update layout");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Error updating layout");
-    } finally {
-      setIsUpdating(false);
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
     }
+
+    saveTimeoutRef.current = setTimeout(async () => {
+      setIsSaving(true);
+      try {
+        const result = await updateLayout(localLayout);
+        if (result.success && result.data) {
+          onUpdate(result.data);
+          toast.success("Layout saved!");
+        } else {
+          setLocalLayout(profile.layout);
+          toast.error(result.error || "Failed to save layout");
+        }
+      } catch (error) {
+        setLocalLayout(profile.layout);
+        toast.error("Error saving layout");
+      } finally {
+        setIsSaving(false);
+      }
+    }, 3000); // Tunggu 3 detik
+
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, [localLayout, profile.layout]);
+
+  const handleLayoutChange = (layout: ProfileLayout) => {
+    setLocalLayout(layout);
+    onUpdate({ ...profile, layout });
   };
 
   return (
     <div className="space-y-3">
-      <Label className="text-xs uppercase tracking-wider text-muted-foreground">Profile Layout</Label>
+      <div className="flex items-center justify-between">
+        <Label className="text-xs uppercase tracking-wider text-muted-foreground">Profile Layout</Label>
+        {isSaving && (
+          <span className="text-xs text-muted-foreground flex items-center gap-1">
+            <Loader2 className="h-3 w-3 animate-spin" />
+            Saving...
+          </span>
+        )}
+      </div>
+
       <div className="grid grid-cols-3 gap-2">
         {layouts.map((layout) => {
           const Icon = layout.icon;
@@ -51,9 +82,8 @@ export function ProfileLayoutSelector({ profile, onUpdate }: ProfileLayoutSelect
             <button
               key={layout.id}
               onClick={() => handleLayoutChange(layout.id)}
-              disabled={isUpdating}
-              className={`flex flex-col items-center justify-center gap-2 rounded-lg border-2 p-3 transition-all disabled:opacity-50 ${
-                profile.layout === layout.id ? "border-primary bg-primary/5 text-primary" : "border-muted bg-transparent text-muted-foreground hover:border-border hover:text-foreground"
+              className={`flex flex-col items-center justify-center gap-2 rounded-lg border-2 p-3 transition-all ${
+                localLayout === layout.id ? "border-primary bg-primary/5 text-primary" : "border-muted bg-transparent text-muted-foreground hover:border-border hover:text-foreground"
               }`}
             >
               <Icon className="h-5 w-5" />

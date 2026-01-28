@@ -119,7 +119,7 @@ model Profile {
   bgColor     String         @default("#1a1a1a")
   bgGradientFrom String?
   bgGradientTo   String?
-  bgWallpaper    String?     
+  bgWallpaper    String?
   bgImage        String?     
   
   // --- Design & Effects ---
@@ -139,6 +139,18 @@ model Profile {
 
   @@map("profile")
   @@index([userId])
+}
+
+model BackgroundPreset {
+  id        String   @id @default(cuid())
+  name      String
+  url       String   
+  category  String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("background_presets")
 }
 
 model SocialLink {

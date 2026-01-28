@@ -20,37 +20,31 @@ export const BACKGROUND_COLORS = [
   "#111827", // Night
   "#000000", // Pure Black
 
-  // SECTION 3: Popular UI Palettes (Vibrant but Professional)
-  // Warm Tones
-  "#F87171", // Coral Red
-  "#FB923C", // Soft Orange
-  "#FBBF24", // Mustard Gold
-  "#FACC15", // Sunny Yellow
+  "#F87171", 
+  "#FB923C", 
+  "#FBBF24", 
+  "#FACC15", 
 
-  // Green & Teal Tones
-  "#A3E635", // Lime
-  "#4ADE80", // Vibrant Green
-  "#2DD4BF", // Teal/Cyan
-  "#0D9488", // Deep Teal
-  "#065F46", // Forest Green
+  "#A3E635", 
+  "#4ADE80", 
+  "#2DD4BF", 
+  "#0D9488", 
+  "#065F46", 
 
-  // Blue & Indigo Tones
-  "#38BDF8", // Light Blue
-  "#60A5FA", // Azure Blue
-  "#818CF8", // Cornflower
-  "#4F46E5", // Royal Indigo
-  "#1D4ED8", // Deep Blue
+  "#38BDF8", 
+  "#60A5FA", 
+  "#818CF8", 
+  "#4F46E5", 
+  "#1D4ED8", 
 
-  // Purple & Pink Tones
-  "#A78BFA", // Soft Violet
-  "#C084FC", // Amethyst
-  "#E879F9", // Orchid
-  "#F472B6", // Rose Pink
-  "#BE185D", // Crimson
+  "#A78BFA", 
+  "#C084FC", 
+  "#E879F9", 
+  "#F472B6", 
+  "#BE185D", 
 
-  // Earthy & Deep Tones
-  "#C2410C", // Burnt Orange
-  "#92400E", // Amber Brown
-  "#4D7C0F", // Olive
+  "#C2410C", 
+  "#92400E", 
+  "#4D7C0F", 
 
 ];

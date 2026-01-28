@@ -7,15 +7,10 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import type { ProfileEditorData } from "@/server/user/profile/payloads";
 import { BACKGROUND_COLORS } from "@/lib/background-colors";
-
-const WALLPAPER_PRESETS = [
-  "https://images.unsplash.com/photo-1765498069280-b863094c17bf?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1767321173860-52dea6b50337?q=80&w=1975&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1767321173860-52dea6b50337?q=80&w=1975&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1767321173860-52dea6b50337?q=80&w=1975&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1767321173860-52dea6b50337?q=80&w=1975&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1767321173860-52dea6b50337?q=80&w=1975&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-];
+import { BACKGROUND_GRADIENTS } from "@/lib/background-gradients";
+import { getBackgroundPresets } from "@/server/website/background-presets/actions";
+import type { BackgroundPreset } from "@/server/website/background-presets/schema";
+import { useEffect, useState } from "react";
 
 interface BackgroundOptionsProps {
   profile: ProfileEditorData;
@@ -23,6 +18,19 @@ interface BackgroundOptionsProps {
 }
 
 export default function BackgroundOptions({ profile, onUpdate }: BackgroundOptionsProps) {
+  const [wallpaperPresets, setWallpaperPresets] = useState<BackgroundPreset[]>([]);
+  const [isLoadingWallpapers, setIsLoadingWallpapers] = useState(true);
+
+  useEffect(() => {
+    async function loadWallpapers() {
+      setIsLoadingWallpapers(true);
+      const presets = await getBackgroundPresets();
+      setWallpaperPresets(presets);
+      setIsLoadingWallpapers(false);
+    }
+    loadWallpapers();
+  }, []);
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -84,34 +92,49 @@ export default function BackgroundOptions({ profile, onUpdate }: BackgroundOptio
       </TabsContent>
 
       <TabsContent value="gradient" className="space-y-4 pt-4">
-        <div className="grid grid-cols-1 gap-2">
-          {[
-            { from: "#4f46e5", to: "#ec4899" },
-            { from: "#f97316", to: "#dc2626" },
-            { from: "#10b981", to: "#3b82f6" },
-          ].map((g, i) => (
+        <div className="flex flex-wrap gap-1 justify-between">
+          {BACKGROUND_GRADIENTS.map((gradient, i) => (
             <button
               key={i}
-              onClick={() => onUpdate({ ...profile, bgGradientFrom: g.from, bgGradientTo: g.to })}
-              className="h-10 w-full rounded-lg border-2 border-transparent"
-              style={{ background: `linear-gradient(135deg, ${g.from}, ${g.to})` }}
-            />
+              onClick={() => onUpdate({ ...profile, bgGradientFrom: gradient.from, bgGradientTo: gradient.to })}
+              className={`relative aspect-square h-10 w-10 rounded-md transition-all duration-200 ${
+                profile.bgGradientFrom === gradient.from && profile.bgGradientTo === gradient.to ? "ring-2 ring-primary ring-offset-2 ring-offset-background scale-110 z-10" : "hover:scale-110 active:scale-95 border border-black/5"
+              }`}
+              style={{ background: `linear-gradient(135deg, ${gradient.from}, ${gradient.to})` }}
+              title={gradient.name}
+            >
+              {profile.bgGradientFrom === gradient.from && profile.bgGradientTo === gradient.to && <div className="absolute inset-0 rounded-md border-2 border-primary/20 animate-pulse" />}
+            </button>
           ))}
         </div>
       </TabsContent>
 
       <TabsContent value="wallpaper" className="space-y-4 pt-4">
-        <div className="grid grid-cols-3 gap-2">
-          {WALLPAPER_PRESETS.map((url) => (
-            <button
-              key={url}
-              onClick={() => onUpdate({ ...profile, bgWallpaper: url })}
-              className={`relative h-20 overflow-hidden rounded-lg border-2 transition-all ${profile.bgWallpaper === url ? "border-primary" : "border-transparent"}`}
-            >
-              <img src={url} className="h-full w-full object-cover" alt="preset" />
-            </button>
-          ))}
-        </div>
+        {isLoadingWallpapers ? (
+          <div className="flex items-center justify-center py-8 text-sm text-muted-foreground">Loading wallpapers...</div>
+        ) : wallpaperPresets.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-muted-foreground/20 bg-muted/10 py-12 text-center">
+            <ImageIcon className="h-8 w-8 text-muted-foreground/50" />
+            <p className="text-sm font-medium text-muted-foreground">No wallpapers available</p>
+            <p className="text-xs text-muted-foreground/70">Wallpapers will appear here once added</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-2">
+            {wallpaperPresets.map((preset) => (
+              <button
+                key={preset.id}
+                onClick={() => onUpdate({ ...profile, bgWallpaper: preset.url })}
+                className={`relative h-20 overflow-hidden rounded-lg border-2 transition-all ${
+                  profile.bgWallpaper === preset.url ? "border-primary ring-2 ring-primary/20 ring-offset-2 ring-offset-background scale-105" : "border-transparent hover:border-primary/50 hover:scale-105"
+                }`}
+                title={preset.name}
+              >
+                <img src={preset.url} className="h-full w-full object-cover" alt={preset.name} />
+                {profile.bgWallpaper === preset.url && <div className="absolute inset-0 bg-primary/10 border-2 border-primary/30" />}
+              </button>
+            ))}
+          </div>
+        )}
       </TabsContent>
 
       <TabsContent value="image" className="space-y-4 pt-4">

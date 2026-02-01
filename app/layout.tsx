@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
-import { extractRouterConfig } from "uploadthing/server";
-import { ourFileRouter } from "@/lib/uploadthing";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -59,8 +57,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const routerConfig = extractRouterConfig(ourFileRouter);
-
   return (
     <html lang="en">
       <head>
@@ -68,7 +64,7 @@ export default function RootLayout({
         <meta name="google-site-verification" content="i_NBx9CVW6gyP0Bs6b5pqNyGqyOZdJ0P3GBJxpBGe8s" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Providers routerConfig={routerConfig}>{children}</Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

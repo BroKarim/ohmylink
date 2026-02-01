@@ -35,8 +35,9 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: {
-      bodySizeLimit: "2mb", // Sesuaikan kebutuhan
+      bodySizeLimit: "2mb", 
     },
+    cacheComponents: true,
   },
 };
 

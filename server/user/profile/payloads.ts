@@ -18,39 +18,11 @@ export const profileEditorPayload = {
   padding: true,
   cardTexture: true,
   bgEffects: true,
-  isPublished: true,
-  user: {
-    select: {
-      username: true,
-    },
-  },
-  socials: {
-    select: {
-      id: true,
-      platform: true,
-      url: true,
-      position: true,
-    },
-    orderBy: { position: "asc" as const },
-  },
-  links: {
-    select: {
-      id: true,
-      title: true,
-      url: true,
-      icon: true,
-      description: true,
-      mediaUrl: true,
-      mediaType: true,
-      paymentProvider: true,
-      paymentAccountId: true,
-      position: true,
-      isActive: true,
-    },
-    where: { isActive: true },
-    orderBy: { position: "asc" as const },
-  },
+  user: { select: { username: true } },
+  socials: { select: { id: true, platform: true, url: true }, orderBy: { position: "asc" } },
+  links: { select: { id: true, title: true, url: true, isActive: true }, orderBy: { position: "asc" } },
 } satisfies Prisma.ProfileSelect;
+
 
 export const profilePublicPayload = {
   slug: true,

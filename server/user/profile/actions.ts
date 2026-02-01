@@ -5,86 +5,68 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { ProfileSchema, ProfileInput } from "./schema";
 import { profileEditorPayload } from "./payloads";
+import { findProfileByUserId } from "./queries";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { ProfileLayout } from "@/lib/generated/prisma/enums";
 
+async function getAuthenticatedUser() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user) throw new Error("Unauthorized");
+  return session.user;
+}
+
 export async function updateProfile(data: ProfileInput) {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
-
-    if (!session?.user) {
-      return { success: false, error: "Unauthorized" };
-    }
-
+    const user = await getAuthenticatedUser();
     const validatedData = ProfileSchema.parse(data);
 
     const updatedProfile = await db.profile.update({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
       data: validatedData,
       select: profileEditorPayload,
     });
 
     revalidatePath("/dashboard");
-    revalidatePath(`/${session.user.username}`);
+    revalidatePath(`/${user.username}`);
 
     return { success: true, data: updatedProfile };
-  } catch (error) {
-    console.error("Failed to update profile:", error);
-    return { success: false, error: "Failed to update profile" };
+  } catch (error: any) {
+    return { success: false, error: error.message || "Failed to update profile" };
   }
 }
 
 export async function updateLayout(layout: ProfileLayout) {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
-
-    if (!session?.user) {
-      return { success: false, error: "Unauthorized" };
-    }
+    const user = await getAuthenticatedUser();
 
     const updatedProfile = await db.profile.update({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
       data: { layout },
       select: profileEditorPayload,
     });
 
     revalidatePath("/dashboard");
-    revalidatePath(`/${session.user.username}`);
+    revalidatePath(`/${user.username}`);
 
     return { success: true, data: updatedProfile };
-  } catch (error) {
-    console.error("Failed to update layout:", error);
-    return { success: false, error: "Failed to update layout" };
+  } catch (error: any) {
+    return { success: false, error: error.message || "Failed to update layout" };
   }
 }
 
 export async function getProfile() {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const user = await getAuthenticatedUser();
 
-    if (!session?.user) {
-      return { success: false, error: "Unauthorized" };
-    }
-
-    const profile = await db.profile.findUnique({
-      where: { userId: session.user.id },
-      select: profileEditorPayload,
-    });
+    const profile = await findProfileByUserId(user.id);
 
     if (!profile) {
       return { success: false, error: "Profile not found" };
     }
 
     return { success: true, data: profile };
-  } catch (error) {
-    console.error("Failed to get profile:", error);
-    return { success: false, error: "Failed to get profile" };
+  } catch (error: any) {
+    return { success: false, error: error.message || "Failed to get profile" };
   }
 }

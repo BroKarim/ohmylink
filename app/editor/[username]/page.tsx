@@ -4,12 +4,12 @@ import { notFound, redirect } from "next/navigation";
 import { headers } from "next/headers";
 import EditorClient from "../_components.tsx/editor-client";
 import { profileEditorPayload } from "@/server/user/profile/payloads";
+import { Suspense } from "react";
 
-export default async function EditorPage({ params }: { params: Promise<{ username: string }> }) {
+async function EditorContent({ username }: { username: string }) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-  const { username } = await params;
 
   if (!session?.user) redirect("/login");
 
@@ -23,7 +23,18 @@ export default async function EditorPage({ params }: { params: Promise<{ usernam
   if (!profile) notFound();
 
   if (profile.userId !== session.user.id) {
-    redirect("/dashboard");
+    redirect("/editor");
   }
+
   return <EditorClient initialProfile={profile} />;
+}
+
+export default async function EditorPage({ params }: { params: Promise<{ username: string }> }) {
+  const { username } = await params;
+
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+      <EditorContent username={username} />
+    </Suspense>
+  );
 }

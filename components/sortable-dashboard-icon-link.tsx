@@ -8,12 +8,7 @@ import { CSS } from "@dnd-kit/utilities";
 import type { Link } from "@/lib/hooks/use-links";
 import { Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipPopup,
-  TooltipProvider,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 
 interface SortableDashboardIconLinkProps {
   link: Link;
@@ -87,13 +82,14 @@ function getSocialIconSvg(url: string) {
     );
   }
   if (lowerUrl.includes("twitter") || lowerUrl.includes("x.com")) {
-    return (
-      <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
-    );
+    return <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />;
   }
   if (lowerUrl.includes("linkedin")) {
     return (
-      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" fillRule="evenodd" />
+      <path
+        d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+        fillRule="evenodd"
+      />
     );
   }
   if (lowerUrl.includes("medium")) {
@@ -107,14 +103,10 @@ function getSocialIconSvg(url: string) {
     );
   }
   if (lowerUrl.includes("tiktok")) {
-    return (
-      <path d="M19.59 6.69a4.83 4.83 0 0 1-1.4-3.51V2.5h-3.26v13.67a2.84 2.84 0 0 1-5.64 0 2.84 2.84 0 0 1 5.64 0V9.67a6.27 6.27 0 0 0 4.66 2.08v-3.4a4.85 4.85 0 0 1-.4-.66z" />
-    );
+    return <path d="M19.59 6.69a4.83 4.83 0 0 1-1.4-3.51V2.5h-3.26v13.67a2.84 2.84 0 0 1-5.64 0 2.84 2.84 0 0 1 5.64 0V9.67a6.27 6.27 0 0 0 4.66 2.08v-3.4a4.85 4.85 0 0 1-.4-.66z" />;
   }
   if (lowerUrl.includes("twitch")) {
-    return (
-      <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z" />
-    );
+    return <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z" />;
   }
   if (lowerUrl.includes("whatsapp")) {
     return (
@@ -139,9 +131,7 @@ function getSocialIconSvg(url: string) {
     );
   }
   if (lowerUrl.includes("hashnode")) {
-    return (
-      <path d="M22.351 8.019l-6.37-6.37a5.63 5.63 0 0 0-7.962 0l-6.37 6.37a5.63 5.63 0 0 0 0 7.962l6.37 6.37a5.63 5.63 0 0 0 7.962 0l6.37-6.37a5.63 5.63 0 0 0 0-7.962zM12 15.953a3.953 3.953 0 1 1 0-7.906 3.953 3.953 0 0 1 0 7.906z" />
-    );
+    return <path d="M22.351 8.019l-6.37-6.37a5.63 5.63 0 0 0-7.962 0l-6.37 6.37a5.63 5.63 0 0 0 0 7.962l6.37 6.37a5.63 5.63 0 0 0 7.962 0l6.37-6.37a5.63 5.63 0 0 0 0-7.962zM12 15.953a3.953 3.953 0 1 1 0-7.906 3.953 3.953 0 0 1 0 7.906z" />;
   }
   if (lowerUrl.includes("gitlab")) {
     return (
@@ -188,22 +178,9 @@ function getSocialIconTitle(url: string): string {
   return "Link";
 }
 
-export function SortableDashboardIconLink({
-  link,
-  onEdit,
-  onDelete,
-  isDeleting = false,
-  isToggling = false,
-}: SortableDashboardIconLinkProps) {
+export function SortableDashboardIconLink({ link, onEdit, onDelete, isDeleting = false, isToggling = false }: SortableDashboardIconLinkProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: link.id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: link.id });
 
   const colors = getSocialIconColor(link.url);
   const svgPath = getSocialIconSvg(link.url);
@@ -241,15 +218,7 @@ export function SortableDashboardIconLink({
       }}
     >
       {svgPath ? (
-        <svg
-          role="img"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          fill={colors.bg}
-          className="shrink-0 pointer-events-none"
-        >
+        <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill={colors.bg} className="shrink-0 pointer-events-none">
           <title>{linkTitle}</title>
           {svgPath}
         </svg>
@@ -281,55 +250,45 @@ export function SortableDashboardIconLink({
 
   return (
     <TooltipProvider>
-      <div
-        ref={setNodeRef}
-        style={style}
-        className={`relative group shrink-0 ${isDeleting || isToggling ? "opacity-60" : ""} ${isDragging ? "z-50" : ""}`}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
+      <div ref={setNodeRef} style={style} className={`relative group shrink-0 ${isDeleting || isToggling ? "opacity-60" : ""} ${isDragging ? "z-50" : ""}`} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
         <Tooltip>
-          <TooltipTrigger render={iconElement as React.ReactElement} />
-          <TooltipPopup>{tooltipText}</TooltipPopup>
+          <TooltipTrigger asChild>{iconElement}</TooltipTrigger>
+          <TooltipContent>{tooltipText}</TooltipContent>
         </Tooltip>
         {isHovered && (
           <>
             <Tooltip>
-              <TooltipTrigger
-                render={
+              <TooltipTrigger asChild>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="secondary"
+                  className="absolute -top-1 -right-1 h-5 w-5 p-0 rounded-full shadow-sm z-10"
+                  onClick={handleEditClick}
+                  aria-label={`Edit ${tooltipText}`}
+                  disabled={isDeleting || isToggling}
+                >
+                  <Pencil className="h-3 w-3" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Edit {tooltipText}</TooltipContent>
+            </Tooltip>
+            {onDelete && (
+              <Tooltip>
+                <TooltipTrigger asChild>
                   <Button
                     type="button"
                     size="sm"
                     variant="secondary"
-                    className="absolute -top-1 -right-1 h-5 w-5 p-0 rounded-full shadow-sm z-10"
-                    onClick={handleEditClick}
-                    aria-label={`Edit ${tooltipText}`}
+                    className="absolute -top-1 -left-1 h-5 w-5 p-0 rounded-full shadow-sm z-10 text-destructive hover:text-destructive hover:bg-destructive/10"
+                    onClick={handleDeleteClick}
+                    aria-label={`Delete ${tooltipText}`}
                     disabled={isDeleting || isToggling}
                   >
-                    <Pencil className="h-3 w-3" />
-                  </Button> as React.ReactElement
-                }
-              />
-              <TooltipPopup>Edit {tooltipText}</TooltipPopup>
-            </Tooltip>
-            {onDelete && (
-              <Tooltip>
-                <TooltipTrigger
-                  render={
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="secondary"
-                      className="absolute -top-1 -left-1 h-5 w-5 p-0 rounded-full shadow-sm z-10 text-destructive hover:text-destructive hover:bg-destructive/10"
-                      onClick={handleDeleteClick}
-                      aria-label={`Delete ${tooltipText}`}
-                      disabled={isDeleting || isToggling}
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button> as React.ReactElement
-                  }
-                />
-                <TooltipPopup>Delete {tooltipText}</TooltipPopup>
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Delete {tooltipText}</TooltipContent>
               </Tooltip>
             )}
           </>
@@ -338,4 +297,3 @@ export function SortableDashboardIconLink({
     </TooltipProvider>
   );
 }
-

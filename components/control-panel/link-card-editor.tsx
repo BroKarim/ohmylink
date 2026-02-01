@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Trash2, Link as LinkIcon, CreditCard, Image as ImageIcon, Loader2, GripVertical, ChevronRight, X, ExternalLink } from "lucide-react";
-import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogClose } from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import type { ProfileEditorData } from "@/server/user/profile/payloads";
 import { createLink, deleteLink, uploadMedia } from "@/server/user/links/actions";
@@ -339,7 +339,7 @@ export function LinkCardEditor({ profile, onUpdate }: LinkCardEditorProps) {
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 {link.url && (
                   <Tooltip>
-                    <TooltipTrigger>
+                    <TooltipTrigger asChild>
                       <a href={link.url} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-md hover:bg-muted transition-colors">
                         <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
                       </a>
@@ -349,7 +349,7 @@ export function LinkCardEditor({ profile, onUpdate }: LinkCardEditorProps) {
                 )}
 
                 <Tooltip>
-                  <TooltipTrigger>
+                  <TooltipTrigger asChild>
                     <button onClick={() => handleDelete(link.id)} disabled={deletingId === link.id} className="p-1.5 rounded-md hover:bg-destructive/10 transition-colors">
                       {deletingId === link.id ? <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" /> : <Trash2 className="h-3.5 w-3.5 text-destructive" />}
                     </button>
@@ -381,10 +381,12 @@ export function LinkCardEditor({ profile, onUpdate }: LinkCardEditorProps) {
             <AlertDialogDescription>This will discard all unsaved changes to this link.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogClose render={<Button variant="outline" size="sm" />}>Keep editing</AlertDialogClose>
-            <AlertDialogClose onClick={resetForm} render={<Button variant="destructive" size="sm" />}>
+            <AlertDialogCancel variant="outline" size="sm">
+              Keep editing
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={resetForm} variant="destructive" size="sm">
               Discard
-            </AlertDialogClose>
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

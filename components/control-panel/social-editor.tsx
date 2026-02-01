@@ -110,8 +110,10 @@ export function SocialMediaEditor({ profile, onUpdate }: SocialMediaEditorProps)
           setIsOpen(open);
         }}
       >
-        <DialogTrigger render={<Button variant="outline" className="w-full border-dashed py-6 gap-2 border-2" />}>
-          <Plus className="h-4 w-4" /> Add Social Media
+        <DialogTrigger asChild>
+          <Button variant="outline" className="w-full border-dashed py-6 gap-2 border-2">
+            <Plus className="h-4 w-4" /> Add Social Media
+          </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>

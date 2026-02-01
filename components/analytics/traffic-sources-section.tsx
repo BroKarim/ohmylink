@@ -3,12 +3,7 @@
 import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import {
-  Empty,
-  EmptyHeader,
-  EmptyTitle,
-  EmptyMedia,
-} from "@/components/ui/empty";
+import { Empty, EmptyIcon, EmptyTitle } from "@/components/ui/empty";
 import { Globe } from "lucide-react";
 import { getReferrerIcon } from "./analytics-icons";
 
@@ -27,12 +22,7 @@ interface TrafficSourcesSectionProps {
   utmCampaigns?: TrafficSource[];
 }
 
-export function TrafficSourcesSection({
-  referrers = [],
-  utmSources = [],
-  utmMediums = [],
-  utmCampaigns = [],
-}: TrafficSourcesSectionProps) {
+export function TrafficSourcesSection({ referrers = [], utmSources = [], utmMediums = [], utmCampaigns = [] }: TrafficSourcesSectionProps) {
   const [activeTab, setActiveTab] = useState("referrers");
 
   const totalForShare = (data: TrafficSource[]) => {
@@ -47,12 +37,10 @@ export function TrafficSourcesSection({
     if (data.length === 0) {
       return (
         <Empty>
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <Globe />
-            </EmptyMedia>
-            <EmptyTitle>No data available</EmptyTitle>
-          </EmptyHeader>
+          <EmptyIcon>
+            <Globe />
+          </EmptyIcon>
+          <EmptyTitle>No data available</EmptyTitle>
         </Empty>
       );
     }
@@ -68,10 +56,7 @@ export function TrafficSourcesSection({
           const ReferrerIcon = item.referrer ? getReferrerIcon(item.referrer) : null;
 
           return (
-            <div
-              key={label}
-              className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50"
-            >
+            <div key={label} className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50">
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 {IconComponent || (ReferrerIcon && <ReferrerIcon className="h-4 w-4" />)}
                 <span className="text-sm font-medium truncate">{label}</span>
@@ -95,25 +80,14 @@ export function TrafficSourcesSection({
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 text-xs sm:text-sm">
-            <TabsTrigger value="referrers">
-              Referrers ({referrers.length})
-            </TabsTrigger>
-            <TabsTrigger value="utm-sources">
-              UTM Sources ({utmSources.length})
-            </TabsTrigger>
-            <TabsTrigger value="utm-mediums">
-              UTM Mediums ({utmMediums.length})
-            </TabsTrigger>
-            <TabsTrigger value="utm-campaigns">
-              UTM Campaigns ({utmCampaigns.length})
-            </TabsTrigger>
+            <TabsTrigger value="referrers">Referrers ({referrers.length})</TabsTrigger>
+            <TabsTrigger value="utm-sources">UTM Sources ({utmSources.length})</TabsTrigger>
+            <TabsTrigger value="utm-mediums">UTM Mediums ({utmMediums.length})</TabsTrigger>
+            <TabsTrigger value="utm-campaigns">UTM Campaigns ({utmCampaigns.length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="referrers" className="mt-4">
-            {renderList(
-              referrers,
-              (item) => item.referrer || "Unknown"
-            )}
+            {renderList(referrers, (item) => item.referrer || "Unknown")}
           </TabsContent>
 
           <TabsContent value="utm-sources" className="mt-4">
@@ -132,4 +106,3 @@ export function TrafficSourcesSection({
     </Card>
   );
 }
-

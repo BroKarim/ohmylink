@@ -10,37 +10,19 @@ type CalBookingButtonProps = {
   size?: "sm" | "lg" | "xl" | "xs" | "default";
 };
 
-export function CalBookingButton({
-  calLink,
-  className,
-  variant = "default",
-  size = "sm",
-}: CalBookingButtonProps) {
+export function CalBookingButton({ calLink, className, variant = "default", size = "sm" }: CalBookingButtonProps) {
   if (!calLink) {
     return null;
   }
 
-  const normalizedLink = calLink.startsWith("http")
-    ? calLink
-    : `https://cal.com/${calLink}`;
+  const normalizedLink = calLink.startsWith("http") ? calLink : `https://cal.com/${calLink}`;
 
   return (
-    <Button
-      render={(props) => (
-        <a
-          {...props}
-          href={normalizedLink}
-          target="_blank"
-          rel="noopener noreferrer"
-        />
-      )}
-      variant={variant}
-      size={size}
-      className={className}
-    >
-      <Calendar />
-      Book on Cal.com
+    <Button asChild variant={variant} size={size} className={className}>
+      <a href={normalizedLink} target="_blank" rel="noopener noreferrer">
+        <Calendar className="mr-2 h-4 w-4" />
+        Book on Cal.com
+      </a>
     </Button>
   );
 }
-

@@ -1,63 +1,21 @@
-"use client";
-
-import { Field as FieldPrimitive } from "@base-ui/react/field";
-
+import * as React from "react";
 import { cn } from "@/lib/utils";
 
-function Field({ className, ...props }: FieldPrimitive.Root.Props) {
-  return (
-    <FieldPrimitive.Root
-      className={cn("flex flex-col items-start gap-2", className)}
-      data-slot="field"
-      {...props}
-    />
-  );
-}
+const Field = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => <div ref={ref} className={cn("space-y-2", className)} {...props} />);
+Field.displayName = "Field";
 
-function FieldLabel({ className, ...props }: FieldPrimitive.Label.Props) {
-  return (
-    <FieldPrimitive.Label
-      className={cn(
-        "inline-flex items-center gap-2 font-medium text-base/4.5 sm:text-sm/4",
-        className,
-      )}
-      data-slot="field-label"
-      {...props}
-    />
-  );
-}
+const FieldLabel = React.forwardRef<HTMLLabelElement, React.LabelHTMLAttributes<HTMLLabelElement>>(({ className, ...props }, ref) => (
+  <label ref={ref} className={cn("text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70", className)} {...props} />
+));
+FieldLabel.displayName = "FieldLabel";
 
-function FieldDescription({
-  className,
-  ...props
-}: FieldPrimitive.Description.Props) {
-  return (
-    <FieldPrimitive.Description
-      className={cn("text-muted-foreground text-xs", className)}
-      data-slot="field-description"
-      {...props}
-    />
-  );
-}
+const FieldControl = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => <div ref={ref} className={cn("relative", className)} {...props} />);
+FieldControl.displayName = "FieldControl";
 
-function FieldError({ className, ...props }: FieldPrimitive.Error.Props) {
-  return (
-    <FieldPrimitive.Error
-      className={cn("text-destructive-foreground text-xs", className)}
-      data-slot="field-error"
-      {...props}
-    />
-  );
-}
+const FieldDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(({ className, ...props }, ref) => <p ref={ref} className={cn("text-sm text-muted-foreground", className)} {...props} />);
+FieldDescription.displayName = "FieldDescription";
 
-const FieldControl = FieldPrimitive.Control;
-const FieldValidity = FieldPrimitive.Validity;
+const FieldError = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(({ className, ...props }, ref) => <p ref={ref} className={cn("text-sm font-medium text-destructive", className)} {...props} />);
+FieldError.displayName = "FieldError";
 
-export {
-  Field,
-  FieldLabel,
-  FieldDescription,
-  FieldError,
-  FieldControl,
-  FieldValidity,
-};
+export { Field, FieldLabel, FieldControl, FieldDescription, FieldError };

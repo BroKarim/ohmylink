@@ -2,12 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { profileService } from "@/lib/services/profile.service";
 import { getAvatarUrl } from "@/lib/utils";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipPopup,
-  TooltipProvider,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 
 export async function TrustedBy() {
   const profiles = await profileService.getPublishedProfiles(9);
@@ -42,27 +37,17 @@ export async function TrustedBy() {
                 <div key={index} className="relative group" style={{ opacity: 1, transform: "none" }}>
                   <div style={{ transform: "none" }}>
                     <Tooltip>
-                      <TooltipTrigger
-                        render={
-                          <Link
-                            href={item.profileUrl}
-                            className="block size-14 sm:size-16 md:size-16 rounded-full bg-zinc-100 cursor-pointer transition-all border border-zinc-200/80 hover:ring-zinc-300 shadow-sm hover:shadow-md relative overflow-hidden hover:rotate-3"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <Image
-                              alt={item.name}
-                              src={item.imageUrl}
-                              width={64}
-                              height={64}
-                              className="rounded-full select-none w-full h-full object-cover"
-                              draggable={false}
-                              loading="lazy"
-                            />
-                          </Link>
-                        }
-                      />
-                      <TooltipPopup>@{item.name}</TooltipPopup>
+                      <TooltipTrigger asChild>
+                        <Link
+                          href={item.profileUrl}
+                          className="block size-14 sm:size-16 md:size-16 rounded-full bg-zinc-100 cursor-pointer transition-all border border-zinc-200/80 hover:ring-zinc-300 shadow-sm hover:shadow-md relative overflow-hidden hover:rotate-3"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Image alt={item.name} src={item.imageUrl} width={64} height={64} className="rounded-full select-none w-full h-full object-cover" draggable={false} loading="lazy" />
+                        </Link>
+                      </TooltipTrigger>
+                      <TooltipContent>@{item.name}</TooltipContent>
                     </Tooltip>
                   </div>
                 </div>
@@ -70,17 +55,15 @@ export async function TrustedBy() {
               <div className="relative group" style={{ opacity: 1, transform: "none" }}>
                 <div>
                   <Tooltip>
-                    <TooltipTrigger
-                      render={
-                        <Link
-                          href="/signup"
-                          className="size-14 sm:size-16 md:size-16 rounded-full bg-zinc-100 cursor-pointer transition-all border border-zinc-200/80 ring-dashed hover:ring-zinc-400 shadow-sm hover:shadow-md relative overflow-hidden flex items-center justify-center"
-                        >
-                          <span className="text-zinc-400 font-medium text-base">+</span>
-                        </Link>
-                      }
-                    />
-                    <TooltipPopup>Join OneURL</TooltipPopup>
+                    <TooltipTrigger asChild>
+                      <Link
+                        href="/signup"
+                        className="size-14 sm:size-16 md:size-16 rounded-full bg-zinc-100 cursor-pointer transition-all border border-zinc-200/80 ring-dashed hover:ring-zinc-400 shadow-sm hover:shadow-md relative overflow-hidden flex items-center justify-center"
+                      >
+                        <span className="text-zinc-400 font-medium text-base">+</span>
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent>Join OneURL</TooltipContent>
                   </Tooltip>
                 </div>
               </div>
@@ -91,4 +74,3 @@ export async function TrustedBy() {
     </section>
   );
 }
-

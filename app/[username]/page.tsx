@@ -3,7 +3,7 @@ import { Link2, BadgeCheck } from "lucide-react";
 import { profileService } from "@/lib/services/profile.service";
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyMedia } from "@/components/ui/empty";
+import { Empty, EmptyIcon, EmptyTitle, EmptyDescription } from "@/components/ui/empty";
 import { getAvatarUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -163,13 +163,11 @@ async function ProfileContent({ username }: { username: string }) {
           {regularLinks.length === 0 && iconLinks.length === 0 && links.length === 0 && (
             <div className="py-8 flex-1 flex items-center justify-center">
               <Empty>
-                <EmptyHeader>
-                  <EmptyMedia variant="icon">
-                    <Link2 className="h-10 w-10 text-muted-foreground/50" />
-                  </EmptyMedia>
-                  <EmptyTitle>No links yet</EmptyTitle>
-                  <EmptyDescription>Check back later for updates.</EmptyDescription>
-                </EmptyHeader>
+                <EmptyIcon>
+                  <Link2 className="h-10 w-10 text-muted-foreground/50" />
+                </EmptyIcon>
+                <EmptyTitle>No links yet</EmptyTitle>
+                <EmptyDescription>Check back later for updates.</EmptyDescription>
               </Empty>
             </div>
           )}

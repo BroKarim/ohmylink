@@ -2,13 +2,7 @@
 
 import { Link2, BadgeCheck } from "lucide-react";
 import Image from "next/image";
-import {
-  Empty,
-  EmptyHeader,
-  EmptyTitle,
-  EmptyDescription,
-  EmptyMedia,
-} from "@/components/ui/empty";
+import { Empty, EmptyIcon, EmptyTitle, EmptyDescription } from "@/components/ui/empty";
 import type { Link } from "@/lib/hooks/use-links";
 import { CalBookingButton } from "@/components/cal-booking-button";
 import { IconLinksList } from "@/components/icon-links-list";
@@ -46,12 +40,9 @@ function parseBioWithCode(bio: string) {
       });
     }
     parts.push(
-      <code
-        key={key++}
-        className="border border-zinc-300 bg-white text-[#00BA7C] px-1.5 py-0.5 rounded-sm text-xs font-mono break-all"
-      >
+      <code key={key++} className="border border-zinc-300 bg-white text-[#00BA7C] px-1.5 py-0.5 rounded-sm text-xs font-mono break-all">
         {match[1]}
-      </code>
+      </code>,
     );
     lastIndex = regex.lastIndex;
   }
@@ -72,17 +63,7 @@ function parseBioWithCode(bio: string) {
   return parts.length > 0 ? parts : [bio];
 }
 
-
-export function ProfilePreview({
-  name,
-  username,
-  bio,
-  avatarUrl,
-  title,
-  links,
-  calLink,
-  className,
-}: ProfilePreviewNewProps) {
+export function ProfilePreview({ name, username, bio, avatarUrl, title, links, calLink, className }: ProfilePreviewNewProps) {
   const activeLinks = links.filter((link) => link.isActive);
   const iconLinks = activeLinks.filter((link) => link.icon);
   const regularLinks = activeLinks.filter((link) => !link.icon);
@@ -94,14 +75,7 @@ export function ProfilePreview({
           <div className="flex items-center gap-3 mb-6">
             {avatarUrl && (
               <div className="size-14 rounded-full overflow-hidden bg-gray-200 shrink-0">
-                <Image
-                  src={avatarUrl}
-                  alt={name}
-                  width={64}
-                  height={64}
-                  className="w-full h-full object-cover select-none"
-                  draggable={false}
-                />
+                <Image src={avatarUrl} alt={name} width={64} height={64} className="w-full h-full object-cover select-none" draggable={false} />
               </div>
             )}
             <div className="relative rounded-md transition-all border border-transparent">
@@ -109,11 +83,7 @@ export function ProfilePreview({
                 <span>{name}</span>
                 <BadgeCheck className="size-5 text-white [&>path:first-child]:fill-amber-500" />
               </h1>
-              {username && (
-                <div className="text-xs text-zinc-500 mt-0.5">
-                  @{username}
-                </div>
-              )}
+              {username && <div className="text-xs text-zinc-500 mt-0.5">@{username}</div>}
               {title && (
                 <div className="flex items-center gap-1 text-xs">
                   <span>{title}</span>
@@ -125,9 +95,7 @@ export function ProfilePreview({
           {bio && (
             <div className="relative rounded-md transition-all mb-6 border border-transparent">
               <div className="wrap-break-word overflow-wrap-anywhere text-sm mx-auto leading-relaxed">
-                <div className="mt-1 mb-1 wrap-break-word overflow-wrap-anywhere">
-                  {parseBioWithCode(bio)}
-                </div>
+                <div className="mt-1 mb-1 wrap-break-word overflow-wrap-anywhere">{parseBioWithCode(bio)}</div>
               </div>
             </div>
           )}
@@ -151,13 +119,11 @@ export function ProfilePreview({
             <hr className="h-px bg-transparent border-t-2 border-dashed border-zinc-200 my-6" />
             <div className="py-8 flex-1 flex items-center justify-center">
               <Empty>
-                <EmptyHeader>
-                  <EmptyMedia variant="icon">
-                    <Link2 className="h-10 w-10 text-muted-foreground/50" />
-                  </EmptyMedia>
-                  <EmptyTitle>No links yet</EmptyTitle>
-                  <EmptyDescription>Check back later for updates.</EmptyDescription>
-                </EmptyHeader>
+                <EmptyIcon>
+                  <Link2 className="h-10 w-10 text-muted-foreground/50" />
+                </EmptyIcon>
+                <EmptyTitle>No links yet</EmptyTitle>
+                <EmptyDescription>Check back later for updates.</EmptyDescription>
               </Empty>
             </div>
           </>
@@ -166,13 +132,11 @@ export function ProfilePreview({
         {regularLinks.length === 0 && iconLinks.length === 0 && activeLinks.length === 0 && (
           <div className="py-8 flex-1 flex items-center justify-center">
             <Empty>
-              <EmptyHeader>
-                <EmptyMedia variant="icon">
-                  <Link2 className="h-10 w-10 text-muted-foreground/50" />
-                </EmptyMedia>
-                <EmptyTitle>No links yet</EmptyTitle>
-                <EmptyDescription>Check back later for updates.</EmptyDescription>
-              </EmptyHeader>
+              <EmptyIcon>
+                <Link2 className="h-10 w-10 text-muted-foreground/50" />
+              </EmptyIcon>
+              <EmptyTitle>No links yet</EmptyTitle>
+              <EmptyDescription>Check back later for updates.</EmptyDescription>
             </Empty>
           </div>
         )}
@@ -186,12 +150,7 @@ export function ProfilePreview({
                 <h2 className="text-xs font-medium text-zinc-900 mb-1">Book a Meeting</h2>
                 <p className="text-xs text-zinc-600">Schedule a time to chat with me!</p>
               </div>
-              <CalBookingButton
-                calLink={calLink}
-                variant="default"
-                size="sm"
-                className="w-fit"
-              />
+              <CalBookingButton calLink={calLink} variant="default" size="sm" className="w-fit" />
             </div>
           </>
         )}
@@ -199,4 +158,3 @@ export function ProfilePreview({
     </div>
   );
 }
-

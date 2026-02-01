@@ -1,29 +1,7 @@
-"use client";
-
-import { Fieldset as FieldsetPrimitive } from "@base-ui/react/fieldset";
-
+import * as React from "react";
 import { cn } from "@/lib/utils";
 
-function Fieldset({ className, ...props }: FieldsetPrimitive.Root.Props) {
-  return (
-    <FieldsetPrimitive.Root
-      className={cn("flex w-full max-w-64 flex-col gap-6", className)}
-      data-slot="fieldset"
-      {...props}
-    />
-  );
-}
-function FieldsetLegend({
-  className,
-  ...props
-}: FieldsetPrimitive.Legend.Props) {
-  return (
-    <FieldsetPrimitive.Legend
-      className={cn("font-semibold", className)}
-      data-slot="fieldset-legend"
-      {...props}
-    />
-  );
-}
+const Fieldset = React.forwardRef<HTMLFieldSetElement, React.FieldsetHTMLAttributes<HTMLFieldSetElement>>(({ className, ...props }, ref) => <fieldset ref={ref} className={cn("space-y-4 border-0 p-0", className)} {...props} />);
+Fieldset.displayName = "Fieldset";
 
-export { Fieldset, FieldsetLegend };
+export { Fieldset };

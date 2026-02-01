@@ -2,12 +2,7 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import {
-  Empty,
-  EmptyHeader,
-  EmptyTitle,
-  EmptyMedia,
-} from "@/components/ui/empty";
+import { Empty, EmptyIcon, EmptyTitle } from "@/components/ui/empty";
 import { Clock } from "lucide-react";
 
 interface Page {
@@ -44,9 +39,7 @@ export function PagesSection({ link, timeAnalysis = [] }: PagesSectionProps) {
             <TabsTrigger value="top-pages">Top Pages (1)</TabsTrigger>
             <TabsTrigger value="entry-pages">Entry Pages (1)</TabsTrigger>
             <TabsTrigger value="exit-pages">Exit Pages (1)</TabsTrigger>
-            <TabsTrigger value="time-analysis">
-              Time Analysis ({timeAnalysis.length})
-            </TabsTrigger>
+            <TabsTrigger value="time-analysis">Time Analysis ({timeAnalysis.length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="top-pages" className="mt-4">
@@ -98,10 +91,7 @@ export function PagesSection({ link, timeAnalysis = [] }: PagesSectionProps) {
             {timeAnalysis.length > 0 ? (
               <div className="space-y-2 max-h-[400px] overflow-y-auto">
                 {timeAnalysis.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50"
-                  >
+                  <div key={index} className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50">
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium">{item.date}</p>
                     </div>
@@ -115,12 +105,10 @@ export function PagesSection({ link, timeAnalysis = [] }: PagesSectionProps) {
               </div>
             ) : (
               <Empty>
-                      <EmptyHeader>
-                        <EmptyMedia variant="icon">
-                          <Clock />
-                        </EmptyMedia>
-                        <EmptyTitle>No time analysis data</EmptyTitle>
-                      </EmptyHeader>
+                <EmptyIcon>
+                  <Clock />
+                </EmptyIcon>
+                <EmptyTitle>No time analysis data</EmptyTitle>
               </Empty>
             )}
           </TabsContent>
@@ -129,4 +117,3 @@ export function PagesSection({ link, timeAnalysis = [] }: PagesSectionProps) {
     </Card>
   );
 }
-

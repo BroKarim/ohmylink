@@ -5,9 +5,9 @@ import type * as React from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipTrigger, TooltipPopup, TooltipProvider } from "@/components/ui/tooltip";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { Globe, TrendingUp, Users, MousePointerClick, RefreshCw, Clock, Eye, Activity, User, BarChart3 } from "lucide-react";
-import { Empty, EmptyHeader, EmptyTitle, EmptyMedia } from "@/components/ui/empty";
+import { Empty, EmptyIcon, EmptyTitle } from "@/components/ui/empty";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { MetricCard } from "@/components/analytics/metric-card";
 import { TrafficTrendsChart } from "@/components/analytics/traffic-trends-chart";
@@ -228,18 +228,14 @@ export function AnalyticsTab({ profileId, links }: AnalyticsTabProps) {
             </Select>
           </div>
           <Tooltip>
-            <TooltipTrigger
-              render={
-                (
-                  <Button variant="outline" size="sm" onClick={handleRefresh} disabled={isLoadingStats || isRefreshing} className="w-full sm:w-auto text-xs sm:text-sm">
-                    <RefreshCw className={`h-4 w-4 ${isLoadingStats || isRefreshing ? "animate-spin" : ""}`} />
-                    <span className="hidden sm:inline">Refresh</span>
-                    <span className="sm:hidden">Refresh</span>
-                  </Button>
-                ) as React.ReactElement
-              }
-            />
-            <TooltipPopup>Refresh analytics data</TooltipPopup>
+            <TooltipTrigger asChild>
+              <Button variant="outline" size="sm" onClick={handleRefresh} disabled={isLoadingStats || isRefreshing} className="w-full sm:w-auto text-xs sm:text-sm">
+                <RefreshCw className={`h-4 w-4 ${isLoadingStats || isRefreshing ? "animate-spin" : ""}`} />
+                <span className="hidden sm:inline">Refresh</span>
+                <span className="sm:hidden">Refresh</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Refresh analytics data</TooltipContent>
           </Tooltip>
         </div>
 
@@ -314,12 +310,10 @@ export function AnalyticsTab({ profileId, links }: AnalyticsTabProps) {
                   </div>
                 ) : (
                   <Empty>
-                    <EmptyHeader>
-                      <EmptyMedia variant="icon">
-                        <Globe />
-                      </EmptyMedia>
-                      <EmptyTitle>No data yet</EmptyTitle>
-                    </EmptyHeader>
+                    <EmptyIcon>
+                      <Globe />
+                    </EmptyIcon>
+                    <EmptyTitle>No data yet</EmptyTitle>
                   </Empty>
                 )}
               </CardContent>

@@ -3,12 +3,7 @@
 import type * as React from "react";
 import Image from "next/image";
 import type { Link } from "@/lib/hooks/use-links";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipPopup,
-  TooltipProvider,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 
 interface MainLinkProps {
   link: Link;
@@ -32,7 +27,7 @@ export function MainLink({ link, onClick, showDescription = false, description }
       <div className="flex gap-3">
         {displayImageUrl && (
           <div className="w-1/3 shrink-0">
-            <div className="aspect-[4/3] bg-zinc-100 rounded-lg overflow-hidden relative">
+            <div className="aspect-4/3 bg-zinc-100 rounded-lg overflow-hidden relative">
               <Image
                 src={displayImageUrl}
                 alt={link.title}
@@ -50,15 +45,9 @@ export function MainLink({ link, onClick, showDescription = false, description }
           </div>
         )}
         <div className="flex-1 min-w-0 p-4 space-y-1">
-          <h4 className="text-sm font-semibold text-zinc-900 truncate group-hover:text-zinc-700">
-            {link.title}
-          </h4>
+          <h4 className="text-sm font-semibold text-zinc-900 truncate group-hover:text-zinc-700">{link.title}</h4>
           <p className="text-xs text-zinc-500 truncate">{link.url}</p>
-          {displayDescription && (
-            <p className="text-xs text-zinc-600 line-clamp-2 mt-1.5">
-              {displayDescription}
-            </p>
-          )}
+          {displayDescription && <p className="text-xs text-zinc-600 line-clamp-2 mt-1.5">{displayDescription}</p>}
         </div>
       </div>
     </a>
@@ -67,18 +56,15 @@ export function MainLink({ link, onClick, showDescription = false, description }
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger render={linkElement as React.ReactElement} />
-        <TooltipPopup>
+        <TooltipTrigger asChild>{linkElement}</TooltipTrigger>
+        <TooltipContent>
           <div className="space-y-1">
             <div className="font-medium">{link.title}</div>
             <div className="text-xs opacity-80">{link.url}</div>
-            {displayDescription && (
-              <div className="text-xs opacity-70 max-w-xs">{displayDescription}</div>
-            )}
+            {displayDescription && <div className="text-xs opacity-70 max-w-xs">{displayDescription}</div>}
           </div>
-        </TooltipPopup>
+        </TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );
 }
-

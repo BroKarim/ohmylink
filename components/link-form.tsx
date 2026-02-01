@@ -55,44 +55,38 @@ export function LinkForm({ onAddLink }: LinkFormProps) {
           <Fieldset className="max-w-none">
             <Field>
               <FieldLabel htmlFor="title">Title</FieldLabel>
-              <FieldControl
-                render={(props) => (
-                  <Input
-                    {...props}
-                    id="title"
-                    value={title}
-                    onChange={(e) => {
-                      setTitle(e.target.value);
-                      setTitleError("");
-                    }}
-                    placeholder="e.g., My Portfolio"
-                    aria-invalid={titleError ? "true" : undefined}
-                    className="w-full"
-                  />
-                )}
-              />
+              <FieldControl>
+                <Input
+                  id="title"
+                  value={title}
+                  onChange={(e) => {
+                    setTitle(e.target.value);
+                    setTitleError("");
+                  }}
+                  placeholder="e.g., My Portfolio"
+                  aria-invalid={titleError ? "true" : undefined}
+                  className="w-full"
+                />
+              </FieldControl>
               {titleError && <FieldError>{titleError}</FieldError>}
             </Field>
 
             <Field>
               <FieldLabel htmlFor="url">URL</FieldLabel>
-              <FieldControl
-                render={(props) => (
-                  <Input
-                    {...props}
-                    id="url"
-                    type="text"
-                    value={url}
-                    onChange={(e) => {
-                      setUrl(e.target.value);
-                      setUrlError("");
-                    }}
-                    placeholder="example.com or https://example.com"
-                    aria-invalid={urlError ? "true" : undefined}
-                    className="w-full"
-                  />
-                )}
-              />
+              <FieldControl>
+                <Input
+                  id="url"
+                  type="text"
+                  value={url}
+                  onChange={(e) => {
+                    setUrl(e.target.value);
+                    setUrlError("");
+                  }}
+                  placeholder="example.com or https://example.com"
+                  aria-invalid={urlError ? "true" : undefined}
+                  className="w-full"
+                />
+              </FieldControl>
               {urlError && <FieldError>{urlError}</FieldError>}
             </Field>
 
@@ -107,4 +101,3 @@ export function LinkForm({ onAddLink }: LinkFormProps) {
 }
 
 export type { Link };
-

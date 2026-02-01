@@ -2,18 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  BarChart3,
-  Settings,
-  MoreHorizontal,
-  Heart,
-} from "lucide-react";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverPopup,
-} from "@/components/ui/popover";
+import { LayoutDashboard, BarChart3, Settings, MoreHorizontal, Heart } from "lucide-react";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { LogOut, MessageCircle } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
@@ -71,91 +61,45 @@ export function DashboardMobileNav({ user }: DashboardMobileNavProps) {
           const Icon = item.icon;
           const isActive = pathname === item.url;
           return (
-            <Link
-              key={item.url}
-              href={item.url}
-              className={`flex flex-col items-center justify-center gap-1 transition-colors ${
-                isActive
-                  ? "text-foreground"
-                  : "text-muted-foreground"
-              }`}
-            >
-              <Icon
-                className={`h-5 w-5 ${
-                  isActive ? "text-foreground" : "text-muted-foreground"
-                }`}
-                strokeWidth={isActive ? 2 : 1.5}
-              />
+            <Link key={item.url} href={item.url} className={`flex flex-col items-center justify-center gap-1 transition-colors ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
+              <Icon className={`h-5 w-5 ${isActive ? "text-foreground" : "text-muted-foreground"}`} strokeWidth={isActive ? 2 : 1.5} />
               <span className="text-[10px] font-medium leading-tight">{item.title}</span>
             </Link>
           );
         })}
         <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-          <PopoverTrigger
-            className={`flex flex-col items-center justify-center gap-1 transition-colors ${
-              isPopoverOpen
-                ? "text-foreground"
-                : "text-muted-foreground"
-            }`}
-          >
-            <MoreHorizontal
-              className={`h-5 w-5 ${
-                isPopoverOpen
-                  ? "text-foreground"
-                  : "text-muted-foreground"
-              }`}
-              strokeWidth={isPopoverOpen ? 2 : 1.5}
-            />
+          <PopoverTrigger className={`flex flex-col items-center justify-center gap-1 transition-colors ${isPopoverOpen ? "text-foreground" : "text-muted-foreground"}`}>
+            <MoreHorizontal className={`h-5 w-5 ${isPopoverOpen ? "text-foreground" : "text-muted-foreground"}`} strokeWidth={isPopoverOpen ? 2 : 1.5} />
             <span className="text-[10px] font-medium leading-tight">More</span>
           </PopoverTrigger>
-          <PopoverPopup side="top" align="end" className="mb-2">
+          <PopoverContent side="top" align="end" className="mb-2">
             <div className="p-2 space-y-1">
               <div className="px-3 py-2 text-sm">
                 <p className="font-medium">{user.name}</p>
-                {user.username && (
-                  <p className="text-xs text-muted-foreground">
-                    @{user.username}
-                  </p>
-                )}
+                {user.username && <p className="text-xs text-muted-foreground">@{user.username}</p>}
               </div>
-              <Link
-                href="/dashboard/support"
-                onClick={() => setIsPopoverOpen(false)}
-                className="w-full"
-              >
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start rounded-lg"
-                >
+              <Link href="/dashboard/support" onClick={() => setIsPopoverOpen(false)} className="w-full">
+                <Button variant="ghost" className="w-full justify-start rounded-lg">
                   <Heart className="h-4 w-4" />
                   <span>Support</span>
                 </Button>
               </Link>
               <FeedbackDialog
                 trigger={
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start rounded-lg"
-                    onClick={() => setIsPopoverOpen(false)}
-                  >
+                  <Button variant="ghost" className="w-full justify-start rounded-lg" onClick={() => setIsPopoverOpen(false)}>
                     <MessageCircle className="h-4 w-4" />
                     <span>Feedback</span>
                   </Button>
                 }
               />
-              <Button
-                variant="destructive"
-                className="w-full justify-start rounded-lg border border-red-200/50 shadow-sm hover:bg-red-600 hover:border-red-300/50 transition-colors"
-                onClick={handleSignOut}
-              >
+              <Button variant="destructive" className="w-full justify-start rounded-lg border border-red-200/50 shadow-sm hover:bg-red-600 hover:border-red-300/50 transition-colors" onClick={handleSignOut}>
                 <LogOut className="h-4 w-4" />
                 <span>Sign Out</span>
               </Button>
             </div>
-          </PopoverPopup>
+          </PopoverContent>
         </Popover>
       </div>
     </nav>
   );
 }
-

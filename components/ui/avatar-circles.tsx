@@ -1,46 +1,26 @@
-"use client"
+import * as React from "react";
+import { cn } from "@/lib/utils";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
-import { cn } from "@/lib/utils"
-
-interface Avatar {
-  imageUrl: string
-  profileUrl: string
-}
 interface AvatarCirclesProps {
-  className?: string
-  numPeople?: number
-  avatarUrls: Avatar[]
+  numPeople?: number;
+  avatarUrls: {
+    imageUrl: string;
+    profileUrl?: string;
+  }[];
+  className?: string;
 }
 
-export const AvatarCircles = ({
-  numPeople,
-  className,
-  avatarUrls,
-}: AvatarCirclesProps) => {
+export function AvatarCircles({ numPeople, avatarUrls, className }: AvatarCirclesProps) {
   return (
-    <div className={cn("z-10 flex -space-x-4 rtl:space-x-reverse", className)}>
-      {avatarUrls.map((url, index) => (
-        <a
-          key={index}
-          href={url.profileUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img
-            key={index}
-            className="h-10 w-10 rounded-full border-2 border-white dark:border-gray-800"
-            src={url.imageUrl}
-            width={40}
-            height={40}
-            alt={`Avatar ${index + 1}`}
-          />
-        </a>
+    <div className={cn("flex -space-x-2 overflow-hidden", className)}>
+      {avatarUrls.map((avatar, index) => (
+        <Avatar key={index} className="inline-block border-2 border-background ring-2 ring-background">
+          <AvatarImage src={avatar.imageUrl} />
+          <AvatarFallback>?</AvatarFallback>
+        </Avatar>
       ))}
-      {(numPeople ?? 0) > 0 && (
-        <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-black text-center text-xs font-medium text-white dark:border-gray-800 dark:bg-white dark:text-black">
-          +{numPeople}
-        </div>
-      )}
+      {(numPeople ?? 0) > 0 && <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-background bg-muted text-xs font-medium ring-2 ring-background">+{numPeople}</div>}
     </div>
-  )
+  );
 }

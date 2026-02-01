@@ -8,12 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipPopup,
-  TooltipProvider,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import type { Link } from "@/lib/hooks/use-links";
 
 interface SortableLinkItemProps {
@@ -27,24 +22,8 @@ interface SortableLinkItemProps {
   onDelete: (id: string) => void;
 }
 
-export function SortableLinkItem({
-  link,
-  clickCount = 0,
-  isLoadingCounts = false,
-  isDeleting = false,
-  isToggling = false,
-  onToggleActive,
-  onEdit,
-  onDelete,
-}: SortableLinkItemProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: link.id });
+export function SortableLinkItem({ link, clickCount = 0, isLoadingCounts = false, isDeleting = false, isToggling = false, onToggleActive, onEdit, onDelete }: SortableLinkItemProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: link.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -53,77 +32,52 @@ export function SortableLinkItem({
   };
 
   const gripElement = (
-    <div
-      {...attributes}
-      {...listeners}
-      className="cursor-grab active:cursor-grabbing touch-none flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
-    >
+    <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing touch-none flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors">
       <GripVertical className="h-5 w-5" />
     </div>
   );
 
   const editButton = (
-    <Button
-      variant="ghost"
-      size="sm"
-      className="h-5 w-5 p-0"
-      onClick={() => onEdit(link)}
-    >
+    <Button variant="ghost" size="sm" className="h-5 w-5 p-0" onClick={() => onEdit(link)}>
       <Edit className="h-3 w-3" />
     </Button>
   );
 
-  const urlElement = (
-    <p className="text-sm text-muted-foreground truncate">{link.url}</p>
-  );
+  const urlElement = <p className="text-sm text-muted-foreground truncate">{link.url}</p>;
 
   const switchElement = (
     <div>
-      <Switch
-        checked={link.isActive}
-        onCheckedChange={(checked) => onToggleActive(link.id, checked)}
-        disabled={isToggling || isDeleting}
-      />
+      <Switch checked={link.isActive} onCheckedChange={(checked) => onToggleActive(link.id, checked)} disabled={isToggling || isDeleting} />
     </div>
   );
 
   const deleteButton = (
-    <Button
-      variant="ghost"
-      size="sm"
-      className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-      onClick={() => onDelete(link.id)}
-      disabled={isToggling || isDeleting}
-    >
+    <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-destructive hover:text-destructive" onClick={() => onDelete(link.id)} disabled={isToggling || isDeleting}>
       <Trash2 className="h-4 w-4" />
     </Button>
   );
 
   return (
     <TooltipProvider>
-      <Card
-        ref={setNodeRef}
-        style={style}
-        className={`${isDeleting || isToggling ? "opacity-60" : ""} ${isDragging ? "shadow-lg ring-2 ring-primary" : ""}`}
-      >
+      <Card ref={setNodeRef} style={style} className={`${isDeleting || isToggling ? "opacity-60" : ""} ${isDragging ? "shadow-lg ring-2 ring-primary" : ""}`}>
         <CardContent className="flex items-center gap-4 p-4">
           <Tooltip>
-            <TooltipTrigger render={gripElement as React.ReactElement} />
-            <TooltipPopup>Drag to reorder</TooltipPopup>
+            <TooltipTrigger asChild>{gripElement}</TooltipTrigger>
+            <TooltipContent>Drag to reorder</TooltipContent>
           </Tooltip>
 
           <div className="flex-1 min-w-0 space-y-1">
             <div className="flex items-center gap-2">
               <p className="font-medium truncate">{link.title}</p>
               <Tooltip>
-                <TooltipTrigger render={editButton as React.ReactElement} />
-                <TooltipPopup>Edit link</TooltipPopup>
+                <TooltipTrigger asChild>{editButton}</TooltipTrigger>
+                <TooltipContent>Edit link</TooltipContent>
               </Tooltip>
             </div>
             <div className="flex items-center gap-2">
               <Tooltip>
-                <TooltipTrigger render={urlElement as React.ReactElement} />
-                <TooltipPopup>{link.url}</TooltipPopup>
+                <TooltipTrigger asChild>{urlElement}</TooltipTrigger>
+                <TooltipContent>{link.url}</TooltipContent>
               </Tooltip>
             </div>
             <div className="flex items-center gap-4 mt-2">
@@ -142,14 +96,12 @@ export function SortableLinkItem({
 
           <div className="flex items-center gap-3">
             <Tooltip>
-              <TooltipTrigger render={switchElement as React.ReactElement} />
-              <TooltipPopup>
-                {link.isActive ? "Disable link" : "Enable link"}
-              </TooltipPopup>
+              <TooltipTrigger asChild>{switchElement}</TooltipTrigger>
+              <TooltipContent>{link.isActive ? "Disable link" : "Enable link"}</TooltipContent>
             </Tooltip>
             <Tooltip>
-              <TooltipTrigger render={deleteButton as React.ReactElement} />
-              <TooltipPopup>Delete link</TooltipPopup>
+              <TooltipTrigger asChild>{deleteButton}</TooltipTrigger>
+              <TooltipContent>Delete link</TooltipContent>
             </Tooltip>
           </div>
         </CardContent>
@@ -157,4 +109,3 @@ export function SortableLinkItem({
     </TooltipProvider>
   );
 }
-

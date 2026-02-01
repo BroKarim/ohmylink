@@ -2,15 +2,7 @@
 
 import { useState } from "react";
 import { MessageCircle, Bug, Sparkles, MessageSquare, HelpCircle, CheckCircle2, AlertCircle } from "lucide-react";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogPopup,
-  DialogHeader,
-  DialogTitle,
-  DialogPanel,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
@@ -94,75 +86,71 @@ export function FeedbackDialog({ trigger }: { trigger?: React.ReactElement }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={trigger || defaultTrigger} />
-      <DialogPopup>
+      <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>
+      <DialogContent>
         <DialogHeader>
           <div className="flex items-center gap-2">
             <MessageCircle className="w-5 h-5 text-zinc-600" />
             <DialogTitle>Share your feedback</DialogTitle>
           </div>
         </DialogHeader>
-        <DialogPanel>
-          <div className="space-y-6">
-            {submitState === "success" ? (
-              <div className="flex flex-col items-center justify-center py-8 space-y-4">
-                <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
-                  <CheckCircle2 className="w-8 h-8 text-green-600" />
-                </div>
-                <div className="text-center space-y-2">
-                  <h3 className="text-lg font-semibold text-zinc-900">Thank you!</h3>
-                  <p className="text-sm text-zinc-600">Your feedback has been submitted successfully.</p>
+        <div className="space-y-6">
+          {submitState === "success" ? (
+            <div className="flex flex-col items-center justify-center py-8 space-y-4">
+              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+                <CheckCircle2 className="w-8 h-8 text-green-600" />
+              </div>
+              <div className="text-center space-y-2">
+                <h3 className="text-lg font-semibold text-zinc-900">Thank you!</h3>
+                <p className="text-sm text-zinc-600">Your feedback has been submitted successfully.</p>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((category) => {
+                  const Icon = category.icon;
+                  const isSelected = selectedCategory === category.id;
+                  return (
+                    <button
+                      key={category.id}
+                      type="button"
+                      onClick={() => setSelectedCategory(category.id)}
+                      disabled={submitState === "submitting"}
+                      className={cn(
+                        "flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors",
+                        isSelected ? "bg-zinc-900 text-white border-zinc-900" : "bg-white text-zinc-900 border-zinc-200 hover:border-zinc-300",
+                        submitState === "submitting" && "opacity-50 cursor-not-allowed",
+                      )}
+                    >
+                      <Icon className="w-4 h-4" />
+                      {category.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="space-y-2">
+                <Textarea
+                  placeholder="Tell us about a bug, improvement idea, or any feedback you have..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="min-h-[120px] resize-none"
+                  maxLength={400}
+                  disabled={submitState === "submitting"}
+                />
+                <div className="flex justify-between items-center text-xs text-zinc-500">
+                  <span>{message.length}/400</span>
                 </div>
               </div>
-            ) : (
-              <>
-                <div className="flex flex-wrap gap-2">
-                  {categories.map((category) => {
-                    const Icon = category.icon;
-                    const isSelected = selectedCategory === category.id;
-                    return (
-                      <button
-                        key={category.id}
-                        type="button"
-                        onClick={() => setSelectedCategory(category.id)}
-                        disabled={submitState === "submitting"}
-                        className={cn(
-                          "flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors",
-                          isSelected
-                            ? "bg-zinc-900 text-white border-zinc-900"
-                            : "bg-white text-zinc-900 border-zinc-200 hover:border-zinc-300",
-                          submitState === "submitting" && "opacity-50 cursor-not-allowed"
-                        )}
-                      >
-                        <Icon className="w-4 h-4" />
-                        {category.label}
-                      </button>
-                    );
-                  })}
+              {submitState === "error" && errorMessage && (
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 border border-red-200">
+                  <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                  <p className="text-sm text-red-600">{errorMessage}</p>
                 </div>
-                <div className="space-y-2">
-                  <Textarea
-                    placeholder="Tell us about a bug, improvement idea, or any feedback you have..."
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    className="min-h-[120px] resize-none"
-                    maxLength={400}
-                    disabled={submitState === "submitting"}
-                  />
-                  <div className="flex justify-between items-center text-xs text-zinc-500">
-                    <span>{message.length}/400</span>
-                  </div>
-                </div>
-                {submitState === "error" && errorMessage && (
-                  <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 border border-red-200">
-                    <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
-                    <p className="text-sm text-red-600">{errorMessage}</p>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        </DialogPanel>
+              )}
+            </>
+          )}
+        </div>
         <DialogFooter>
           {submitState !== "success" && (
             <>
@@ -179,18 +167,13 @@ export function FeedbackDialog({ trigger }: { trigger?: React.ReactElement }) {
               >
                 Cancel
               </Button>
-              <Button
-                onClick={handleSubmit}
-                disabled={!canSubmit || submitState !== "idle"}
-                className="bg-zinc-900 text-white hover:bg-zinc-800 disabled:opacity-50"
-              >
+              <Button onClick={handleSubmit} disabled={!canSubmit || submitState !== "idle"} className="bg-zinc-900 text-white hover:bg-zinc-800 disabled:opacity-50">
                 {submitState === "submitting" ? "Submitting..." : "Submit"}
               </Button>
             </>
           )}
         </DialogFooter>
-      </DialogPopup>
+      </DialogContent>
     </Dialog>
   );
 }
-

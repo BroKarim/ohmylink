@@ -35,11 +35,11 @@ const buttonVariants = cva(
   },
 );
 
-export interface Button2Props extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 
-const Button2 = React.forwardRef<HTMLButtonElement, Button2Props>(({ className, variant, size, ...props }, ref) => {
+const Button2 = React.forwardRef<HTMLButtonElement, ButtonProps>(({ className, variant, size, ...props }, ref) => {
   return <button className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />;
 });
 Button2.displayName = "Button2";

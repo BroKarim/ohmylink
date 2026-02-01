@@ -4,14 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ChevronLeft, Trash2 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogPanel,
-} from "@/components/ui/dialog";
-import { Form } from "@/components/ui/form";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Field, FieldLabel, FieldControl, FieldError } from "@/components/ui/field";
 import { linkSchema } from "@/lib/validations/schemas";
 import { toastError } from "@/lib/toast";
@@ -118,14 +111,7 @@ interface IconLinkDialogProps {
   link: IconLinkDialogLink | null;
 }
 
-export function IconLinkDialog({
-  open,
-  onOpenChange,
-  onSave,
-  onRemove,
-  isPending = false,
-  link,
-}: IconLinkDialogProps) {
+export function IconLinkDialog({ open, onOpenChange, onSave, onRemove, isPending = false, link }: IconLinkDialogProps) {
   const [handle, setHandle] = useState("");
   const [handleError, setHandleError] = useState("");
   const [isRemoving, setIsRemoving] = useState(false);
@@ -162,12 +148,12 @@ export function IconLinkDialog({
       const validated = linkSchema.parse({
         title: link.title,
         url: newUrl,
-        icon: link.icon || "🔗"
+        icon: link.icon || "🔗",
       });
       await onSave({
         title: validated.title,
         url: validated.url,
-        icon: validated.icon ?? null
+        icon: validated.icon ?? null,
       });
       onOpenChange(false);
     } catch (error) {
@@ -206,72 +192,49 @@ export function IconLinkDialog({
       <DialogContent className="sm:max-w-[400px]" showCloseButton={false}>
         <DialogHeader>
           <div className="flex items-center justify-between">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 p-0"
-              onClick={() => handleOpenChange(false)}
-            >
+            <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleOpenChange(false)}>
               <ChevronLeft className="h-5 w-5" />
             </Button>
-            <DialogTitle className="flex-1 text-center px-4">
-              Edit {iconTitle} icon
-            </DialogTitle>
+            <DialogTitle className="flex-1 text-center px-4">Edit {iconTitle} icon</DialogTitle>
             <div className="w-8" />
           </div>
         </DialogHeader>
-        <Form onSubmit={handleSubmit}>
-          <DialogPanel>
-            <div className="space-y-6 py-4">
-              <Field>
-                <FieldLabel htmlFor="handle">
-                  Handle<span className="text-destructive">*</span>
-                </FieldLabel>
-                <FieldControl
-                  render={(props) => (
-                    <Input
-                      {...props}
-                      id="handle"
-                      value={handle}
-                      onChange={(e) => {
-                        setHandle(e.target.value);
-                        setHandleError("");
-                      }}
-                      placeholder="username"
-                      aria-invalid={handleError ? "true" : undefined}
-                      disabled={isPending || isRemoving}
-                      autoFocus
-                    />
-                  )}
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-6 py-4">
+            <Field>
+              <FieldLabel htmlFor="handle">
+                Handle<span className="text-destructive">*</span>
+              </FieldLabel>
+              <FieldControl>
+                <Input
+                  id="handle"
+                  value={handle}
+                  onChange={(e) => {
+                    setHandle(e.target.value);
+                    setHandleError("");
+                  }}
+                  placeholder="username"
+                  aria-invalid={handleError ? "true" : undefined}
+                  disabled={isPending || isRemoving}
+                  autoFocus
                 />
-                {handleError && <FieldError>{handleError}</FieldError>}
-              </Field>
+              </FieldControl>
+              {handleError && <FieldError>{handleError}</FieldError>}
+            </Field>
 
-              <div className="space-y-3">
-                <Button
-                  type="submit"
-                  disabled={isPending || isRemoving}
-                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-                >
-                  {isPending ? "Saving..." : "Save"}
-                </Button>
+            <div className="space-y-3">
+              <Button type="submit" disabled={isPending || isRemoving} className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+                {isPending ? "Saving..." : "Save"}
+              </Button>
 
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleRemove}
-                  disabled={isPending || isRemoving}
-                  className="w-full"
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Remove icon
-                </Button>
-              </div>
+              <Button type="button" variant="outline" onClick={handleRemove} disabled={isPending || isRemoving} className="w-full">
+                <Trash2 className="h-4 w-4 mr-2" />
+                Remove icon
+              </Button>
             </div>
-          </DialogPanel>
-        </Form>
+          </div>
+        </form>
       </DialogContent>
     </Dialog>
   );
 }
-

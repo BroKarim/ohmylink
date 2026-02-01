@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { AlignCenter, AlignRight, LayoutDashboard, Loader2 } from "lucide-react";
+import { AlignCenterVertical, AlignEndVertical, AlignStartVertical, Loader2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { ProfileLayout } from "@/lib/generated/prisma/enums";
 import { updateLayout } from "@/server/user/profile/actions";
@@ -20,9 +20,9 @@ export function ProfileLayoutSelector({ profile, onUpdate }: ProfileLayoutSelect
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const layouts = [
-    { id: ProfileLayout.center, icon: AlignCenter, label: "Centered" },
-    { id: ProfileLayout.left_stack, icon: AlignRight, label: "Left Stack" },
-    { id: ProfileLayout.left_row, icon: LayoutDashboard, label: "Left Row" },
+    { id: ProfileLayout.left_stack, icon: AlignEndVertical, label: "Left Stack" },
+    { id: ProfileLayout.center, icon: AlignCenterVertical, label: "Centered" },
+    { id: ProfileLayout.left_row, icon: AlignStartVertical, label: "Left Row" },
   ];
 
   useEffect(() => {
@@ -81,14 +81,13 @@ export function ProfileLayoutSelector({ profile, onUpdate }: ProfileLayoutSelect
             <button
               key={layout.id}
               onClick={() => handleLayoutChange(layout.id)}
-              className={`flex flex-col items-center justify-center gap-2 rounded-lg border-2 p-3 transition-all ${
+              className={`flex items-center justify-center rounded-lg border-2 p-3 transition-all ${
                 localLayout === layout.id
                   ? "shadow-[0px_32px_64px_-16px_#0000004c,0px_16px_32px_-8px_#0000004c,0px_8px_16px_-4px_#0000003d,0px_4px_8px_-2px_#0000003d,0px_-8px_16px_-1px_#00000029,0px_2px_4px_-1px_#0000003d,0px_0px_0px_1px_#000000,inset_0px_0px_0px_1px_#ffffff14,inset_0px_1px_0px_#ffffff33] border-none bg-primary/5 text-primary"
                   : "border-muted bg-transparent text-muted-foreground hover:border-border hover:text-foreground"
               }`}
             >
-              <Icon className="h-5 w-5" />
-              <span className="text-[10px] font-medium">{layout.label}</span>
+              <Icon className="h-6 w-6" />
             </button>
           );
         })}

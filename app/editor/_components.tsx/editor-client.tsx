@@ -1,10 +1,13 @@
-'use client'
+"use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EditorHeader from "./editor-header";
 import Preview from "./editor-preview";
 import ControlPanel from "./control-panel";
 import { EditorDock } from "./editor-dock";
+import { UnsavedChangesDialog } from "./unsaved-changes-dialog";
+import { NavigationGuard } from "./navigation-guard";
+import { useEditorStore } from "@/lib/stores/editor-store";
 import type { ProfileEditorData } from "@/server/user/profile/payloads";
 
 interface EditorClientProps {
@@ -12,19 +15,49 @@ interface EditorClientProps {
 }
 
 export default function EditorClient({ initialProfile }: EditorClientProps) {
-  const [profile, setProfile] = useState<ProfileEditorData>(initialProfile);
   const [viewMode, setViewMode] = useState<"mobile" | "desktop">("mobile");
+  const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
+
+  const { draftProfile, isDirty, initializeEditor, updateDraft, discardChanges } = useEditorStore();
+
+  useEffect(() => {
+    initializeEditor(initialProfile);
+  }, [initialProfile, initializeEditor]);
+
+  useEffect(() => {
+    if (isDirty && draftProfile) {
+      const hasDraftFromPreviousSession = JSON.stringify(draftProfile) !== JSON.stringify(initialProfile);
+
+      if (hasDraftFromPreviousSession) {
+        setShowUnsavedDialog(true);
+      }
+    }
+  }, []);
+
+  const handleRestoreDraft = () => {
+    setShowUnsavedDialog(false);
+  };
+
+  const handleDiscardDraft = () => {
+    discardChanges();
+    setShowUnsavedDialog(false);
+  };
+
+  const currentProfile = draftProfile || initialProfile;
 
   return (
     <main className="min-h-screen flex h-screen flex-col bg-background">
-      <EditorHeader profile={profile} />
+      <NavigationGuard />
+      <EditorHeader profile={currentProfile} />
 
       <div className="flex flex-1 gap-6 overflow-hidden p-6">
-        <Preview profile={profile} viewMode={viewMode} />
-        <ControlPanel profile={profile} onUpdate={setProfile} />
+        <Preview profile={currentProfile} viewMode={viewMode} />
+        <ControlPanel profile={currentProfile} onUpdate={updateDraft} />
       </div>
 
       <EditorDock viewMode={viewMode} setViewMode={setViewMode} />
+
+      <UnsavedChangesDialog open={showUnsavedDialog} onRestore={handleRestoreDraft} onDiscard={handleDiscardDraft} />
     </main>
   );
 }

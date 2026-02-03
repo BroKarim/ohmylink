@@ -1,14 +1,11 @@
 "use client";
 
-import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Sparkles, Sun, Droplets, Contrast, EyeOff, Settings2, RotateCcw } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { ProfileEditorData } from "@/server/user/profile/payloads";
-import { updateBackgroundEffects } from "@/server/user/profile/actions";
-import { toast } from "sonner";
 
 interface BackgroundEffectsProps {
   profile: ProfileEditorData;
@@ -16,9 +13,6 @@ interface BackgroundEffectsProps {
 }
 
 export default function BackgroundEffects({ profile, onUpdate }: BackgroundEffectsProps) {
-  const [isSaving, setIsSaving] = useState(false);
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
   const defaultEffects = {
     blur: 0,
     noise: 0,
@@ -37,57 +31,23 @@ export default function BackgroundEffects({ profile, onUpdate }: BackgroundEffec
     { id: "contrast", label: "Contrast", icon: Contrast, min: 50, max: 150, step: 1, unit: "%" },
   ];
 
-  const debouncedSave = (effects: any) => {
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
-
-    setIsSaving(true);
-    saveTimeoutRef.current = setTimeout(async () => {
-      const toastId = toast.loading("Saving effects...");
-
-      try {
-        const result = await updateBackgroundEffects(effects);
-
-        if (result.success) {
-          toast.success("Effects saved", { id: toastId });
-        } else {
-          toast.error("Failed to save", { id: toastId });
-        }
-      } catch (error) {
-        toast.error("Error saving effects", { id: toastId });
-      } finally {
-        setIsSaving(false);
-      }
-    }, 1500);
-  };
-
   const handleUpdateEffect = (id: string, value: number) => {
     const newEffects = {
       ...bgEffects,
       [id]: value,
     };
 
-    // Optimistic update
     onUpdate({
       ...profile,
       bgEffects: newEffects,
     });
-
-    // Debounced save
-    debouncedSave(newEffects);
   };
 
   const handleReset = () => {
-    // Optimistic update with default values
     onUpdate({
       ...profile,
       bgEffects: defaultEffects,
     });
-
-    // Debounced save
-    debouncedSave(defaultEffects);
-    toast.info("Effects reset to default");
   };
 
   return (

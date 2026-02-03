@@ -1,14 +1,11 @@
 "use client";
 
-import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Grid3x3, Sparkles, Circle, Waves, StretchHorizontal, Grid2x2, RotateCcw } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { ProfileEditorData } from "@/server/user/profile/payloads";
-import { updateBackgroundPattern } from "@/server/user/profile/actions";
-import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 
 interface BackgroundPatternProps {
@@ -17,9 +14,6 @@ interface BackgroundPatternProps {
 }
 
 export default function BackgroundPattern({ profile, onUpdate }: BackgroundPatternProps) {
-  const [isSaving, setIsSaving] = useState(false);
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
   const defaultPattern = {
     type: "none",
     color: "#ffffff",
@@ -43,31 +37,6 @@ export default function BackgroundPattern({ profile, onUpdate }: BackgroundPatte
     { id: "noise", label: "Noise", icon: Sparkles },
   ];
 
-  const debouncedSave = (pattern: any) => {
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
-
-    setIsSaving(true);
-    saveTimeoutRef.current = setTimeout(async () => {
-      const toastId = toast.loading("Saving pattern...");
-
-      try {
-        const result = await updateBackgroundPattern(pattern);
-
-        if (result.success) {
-          toast.success("Pattern saved", { id: toastId });
-        } else {
-          toast.error("Failed to save", { id: toastId });
-        }
-      } catch (error) {
-        toast.error("Error saving pattern", { id: toastId });
-      } finally {
-        setIsSaving(false);
-      }
-    }, 1500);
-  };
-
   const handleUpdatePattern = (updates: Partial<typeof defaultPattern>) => {
     const newPattern = {
       ...bgPattern,
@@ -78,8 +47,6 @@ export default function BackgroundPattern({ profile, onUpdate }: BackgroundPatte
       ...profile,
       bgPattern: newPattern,
     });
-
-    debouncedSave(newPattern);
   };
 
   const handleReset = () => {
@@ -87,9 +54,6 @@ export default function BackgroundPattern({ profile, onUpdate }: BackgroundPatte
       ...profile,
       bgPattern: defaultPattern,
     });
-
-    debouncedSave(defaultPattern);
-    toast.info("Pattern reset to default");
   };
 
   return (

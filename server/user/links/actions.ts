@@ -60,7 +60,7 @@ export async function updateSocialLink(id: string, data: SocialLinkInput) {
 
     const validatedData = SocialLinkSchema.parse(data);
 
-    const socialLink = await db.socialLink.update({
+    await db.socialLink.update({
       where: { id },
       data: validatedData,
     });
@@ -68,7 +68,7 @@ export async function updateSocialLink(id: string, data: SocialLinkInput) {
     revalidatePath("/dashboard");
     revalidatePath(`/${session.user.username}`);
 
-    return { success: true, data: socialLink };
+    return { success: true };
   } catch (error) {
     console.error("Failed to update social link:", error);
     return { success: false, error: "Failed to update social link" };
@@ -169,7 +169,7 @@ export async function updateLink(id: string, data: Partial<LinkInput>) {
       await deleteFromS3(existingLink.mediaUrl);
     }
 
-    const link = await db.link.update({
+    await db.link.update({
       where: { id },
       data,
     });
@@ -177,7 +177,7 @@ export async function updateLink(id: string, data: Partial<LinkInput>) {
     revalidatePath("/dashboard");
     revalidatePath(`/${session.user.username}`);
 
-    return { success: true, data: link };
+    return { success: true };
   } catch (error) {
     console.error("Failed to update link:", error);
     return { success: false, error: "Failed to update link" };

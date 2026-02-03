@@ -21,16 +21,15 @@ export async function updateProfile(data: ProfileInput) {
     const user = await getAuthenticatedUser();
     const validatedData = ProfileSchema.parse(data);
 
-    const updatedProfile = await db.profile.update({
+    await db.profile.update({
       where: { userId: user.id },
       data: validatedData,
-      select: profileEditorPayload,
     });
 
     revalidatePath("/dashboard");
     revalidatePath(`/${user.username}`);
 
-    return { success: true, data: updatedProfile };
+    return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message || "Failed to update profile" };
   }
@@ -40,16 +39,15 @@ export async function updateLayout(layout: ProfileLayout) {
   try {
     const user = await getAuthenticatedUser();
 
-    const updatedProfile = await db.profile.update({
+    await db.profile.update({
       where: { userId: user.id },
       data: { layout },
-      select: profileEditorPayload,
     });
 
     revalidatePath("/dashboard");
     revalidatePath(`/${user.username}`);
 
-    return { success: true, data: updatedProfile };
+    return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message || "Failed to update layout" };
   }
@@ -59,16 +57,15 @@ export async function updateBackground(data: { bgType?: "color" | "gradient" | "
   try {
     const user = await getAuthenticatedUser();
 
-    const updatedProfile = await db.profile.update({
+    await db.profile.update({
       where: { userId: user.id },
       data,
-      select: profileEditorPayload,
     });
 
     revalidatePath("/dashboard");
     revalidatePath(`/${user.username}`);
 
-    return { success: true, data: updatedProfile };
+    return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message || "Failed to update background" };
   }
@@ -78,16 +75,15 @@ export async function updateBackgroundEffects(effects: { blur: number; noise: nu
   try {
     const user = await getAuthenticatedUser();
 
-    const updatedProfile = await db.profile.update({
+    await db.profile.update({
       where: { userId: user.id },
       data: { bgEffects: effects },
-      select: profileEditorPayload,
     });
 
     revalidatePath("/dashboard");
     revalidatePath(`/${user.username}`);
 
-    return { success: true, data: updatedProfile };
+    return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message || "Failed to update effects" };
   }
@@ -97,16 +93,15 @@ export async function updateBackgroundPattern(pattern: { type: string; color: st
   try {
     const user = await getAuthenticatedUser();
 
-    const updatedProfile = await db.profile.update({
+    await db.profile.update({
       where: { userId: user.id },
       data: { bgPattern: pattern },
-      select: profileEditorPayload,
     });
 
     revalidatePath("/dashboard");
     revalidatePath(`/${user.username}`);
 
-    return { success: true, data: updatedProfile };
+    return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message || "Failed to update pattern" };
   }

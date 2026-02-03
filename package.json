@@ -67,7 +67,8 @@
     "uploadthing": "^7.7.4",
     "url-metadata": "^5.4.1",
     "validator": "^13.15.26",
-    "zod": "^4.3.4"
+    "zod": "^4.3.4",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

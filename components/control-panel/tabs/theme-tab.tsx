@@ -1,6 +1,7 @@
 import { Palette, Loader2, Check } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import BackgroundOptions from "@/components/control-panel/background-options";
+import BackgroundPattern from "@/components/control-panel/background-pattern";
 import BackgroundEffect from "@/components/control-panel/background-effect";
 import { CardTextureSelector } from "@/components/control-panel/texture-selector";
 import { Button } from "@/components/ui/button";
@@ -42,6 +43,7 @@ export function ThemeTab({ profile, onUpdate }: ThemeTabProps) {
     <div className="space-y-2 px-3 pb-4">
       <div className="space-y-6">
         <BackgroundOptions profile={profile} onUpdate={onUpdate} />
+        <BackgroundPattern profile={profile} onUpdate={onUpdate} />
         <BackgroundEffect profile={profile} onUpdate={onUpdate} />
         <CardTextureSelector profile={profile} onUpdate={onUpdate} />
 

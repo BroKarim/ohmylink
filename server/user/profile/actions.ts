@@ -93,6 +93,25 @@ export async function updateBackgroundEffects(effects: { blur: number; noise: nu
   }
 }
 
+export async function updateBackgroundPattern(pattern: { type: string; color: string; opacity: number; thickness: number; scale: number }) {
+  try {
+    const user = await getAuthenticatedUser();
+
+    const updatedProfile = await db.profile.update({
+      where: { userId: user.id },
+      data: { bgPattern: pattern },
+      select: profileEditorPayload,
+    });
+
+    revalidatePath("/dashboard");
+    revalidatePath(`/${user.username}`);
+
+    return { success: true, data: updatedProfile };
+  } catch (error: any) {
+    return { success: false, error: error.message || "Failed to update pattern" };
+  }
+}
+
 export async function getProfile() {
   try {
     const user = await getAuthenticatedUser();

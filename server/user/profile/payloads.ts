@@ -18,6 +18,7 @@ export const profileEditorPayload = {
   padding: true,
   cardTexture: true,
   bgEffects: true,
+  bgPattern: true,
   user: { select: { username: true } },
   socials: { select: { id: true, platform: true, url: true }, orderBy: { position: "asc" } },
   links: {
@@ -56,6 +57,7 @@ export const profilePublicPayload = {
   padding: true,
   cardTexture: true,
   bgEffects: true,
+  bgPattern: true,
   socials: {
     select: {
       platform: true,

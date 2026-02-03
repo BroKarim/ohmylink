@@ -1,4 +1,5 @@
 import type { ProfileEditorData } from "@/server/user/profile/payloads";
+import { PatternRenderer } from "./pattern-renderer";
 
 interface PreviewBackgroundProps {
   profile: ProfileEditorData;
@@ -6,6 +7,8 @@ interface PreviewBackgroundProps {
 
 export function PreviewBackground({ profile }: PreviewBackgroundProps) {
   const bgEffects = profile.bgEffects as any;
+  const bgPattern = (profile.bgPattern as any) || { type: "none", color: "#ffffff", opacity: 10, thickness: 1, scale: 20 };
+
   const getBackgroundStyle = () => {
     switch (profile.bgType) {
       case "gradient":
@@ -45,6 +48,9 @@ export function PreviewBackground({ profile }: PreviewBackgroundProps) {
           transform: (bgEffects?.blur ?? 0) > 0 ? "scale(1.1)" : "scale(1)",
         }}
       />
+
+      {/* Pattern Layer */}
+      <PatternRenderer type={bgPattern.type} color={bgPattern.color} opacity={bgPattern.opacity} thickness={bgPattern.thickness} scale={bgPattern.scale} />
 
       <div
         className="absolute inset-0 pointer-events-none mix-blend-overlay"

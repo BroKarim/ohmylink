@@ -74,6 +74,25 @@ export async function updateBackground(data: { bgType?: "color" | "gradient" | "
   }
 }
 
+export async function updateBackgroundEffects(effects: { blur: number; noise: number; brightness: number; saturation: number; contrast: number }) {
+  try {
+    const user = await getAuthenticatedUser();
+
+    const updatedProfile = await db.profile.update({
+      where: { userId: user.id },
+      data: { bgEffects: effects },
+      select: profileEditorPayload,
+    });
+
+    revalidatePath("/dashboard");
+    revalidatePath(`/${user.username}`);
+
+    return { success: true, data: updatedProfile };
+  } catch (error: any) {
+    return { success: false, error: error.message || "Failed to update effects" };
+  }
+}
+
 export async function getProfile() {
   try {
     const user = await getAuthenticatedUser();

@@ -1,7 +1,14 @@
+"use client";
+
+import { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
-import { Sparkles, Sun, Droplets, Contrast, EyeOff } from "lucide-react";
+import { Sparkles, Sun, Droplets, Contrast, EyeOff, Settings2, RotateCcw } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { ProfileEditorData } from "@/server/user/profile/payloads";
+import { updateBackgroundEffects } from "@/server/user/profile/actions";
+import { toast } from "sonner";
 
 interface BackgroundEffectsProps {
   profile: ProfileEditorData;
@@ -9,13 +16,18 @@ interface BackgroundEffectsProps {
 }
 
 export default function BackgroundEffects({ profile, onUpdate }: BackgroundEffectsProps) {
-  const bgEffects = (profile.bgEffects as any) || {
+  const [isSaving, setIsSaving] = useState(false);
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const defaultEffects = {
     blur: 0,
     noise: 0,
     brightness: 100,
     saturation: 100,
     contrast: 100,
   };
+
+  const bgEffects = (profile.bgEffects as any) || defaultEffects;
 
   const settings = [
     { id: "blur", label: "Blur", icon: EyeOff, min: 0, max: 20, step: 1, unit: "px" },
@@ -25,38 +37,103 @@ export default function BackgroundEffects({ profile, onUpdate }: BackgroundEffec
     { id: "contrast", label: "Contrast", icon: Contrast, min: 50, max: 150, step: 1, unit: "%" },
   ];
 
+  const debouncedSave = (effects: any) => {
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    setIsSaving(true);
+    saveTimeoutRef.current = setTimeout(async () => {
+      const toastId = toast.loading("Saving effects...");
+
+      try {
+        const result = await updateBackgroundEffects(effects);
+
+        if (result.success) {
+          toast.success("Effects saved", { id: toastId });
+        } else {
+          toast.error("Failed to save", { id: toastId });
+        }
+      } catch (error) {
+        toast.error("Error saving effects", { id: toastId });
+      } finally {
+        setIsSaving(false);
+      }
+    }, 1500);
+  };
+
   const handleUpdateEffect = (id: string, value: number) => {
+    const newEffects = {
+      ...bgEffects,
+      [id]: value,
+    };
+
+    // Optimistic update
     onUpdate({
       ...profile,
-      bgEffects: {
-        ...bgEffects,
-        [id]: value,
-      },
+      bgEffects: newEffects,
     });
+
+    // Debounced save
+    debouncedSave(newEffects);
+  };
+
+  const handleReset = () => {
+    // Optimistic update with default values
+    onUpdate({
+      ...profile,
+      bgEffects: defaultEffects,
+    });
+
+    // Debounced save
+    debouncedSave(defaultEffects);
+    toast.info("Effects reset to default");
   };
 
   return (
-    <div className="space-y-6 pt-2">
-      {settings.map((item) => {
-        const Icon = item.icon;
-        const value = bgEffects[item.id] ?? (item.id === "blur" || item.id === "noise" ? 0 : 100);
-
-        return (
-          <div key={item.id} className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm font-medium">
-                <Icon className="h-4 w-4 text-muted-foreground" />
-                <Label>{item.label}</Label>
-              </div>
-              <span className="text-xs font-mono text-muted-foreground">
-                {value}
-                {item.unit}
-              </span>
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline" size="sm" className="w-full">
+          <Settings2 className="h-4 w-4 mr-2" />
+          Background Effects
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-80" align="start">
+        <div className="space-y-4">
+          <div className="flex items-start justify-between">
+            <div className="space-y-1">
+              <h4 className="font-medium text-sm leading-none">Background Effects</h4>
+              <p className="text-xs text-muted-foreground leading-relaxed">Adjust visual effects for your background</p>
             </div>
-            <Slider value={[value]} min={item.min} max={item.max} step={item.step} onValueChange={(val: any) => handleUpdateEffect(item.id, val[0])} className="py-2" />
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={handleReset} title="Reset to defaults">
+              <RotateCcw className="h-4 w-4" />
+            </Button>
           </div>
-        );
-      })}
-    </div>
+
+          <div className="space-y-4">
+            {settings.map((item) => {
+              const Icon = item.icon;
+              const value = bgEffects[item.id] ?? (item.id === "blur" || item.id === "noise" ? 0 : 100);
+
+              return (
+                <div key={item.id} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                      <Icon className="h-4 w-4 text-muted-foreground" />
+                      <Label className="text-xs">{item.label}</Label>
+                    </div>
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {value}
+                      {item.unit}
+                    </span>
+                  </div>
+                  <Slider value={[value]} min={item.min} max={item.max} step={item.step} onValueChange={(val: any) => handleUpdateEffect(item.id, val[0])} />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }

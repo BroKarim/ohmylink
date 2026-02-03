@@ -10,13 +10,19 @@ export function PatternRenderer({ type, color, opacity, thickness, scale }: Patt
   if (type === "none") return null;
 
   const patternId = `pattern-${type}`;
+  const maskId = `mask-${type}`;
   const opacityDecimal = opacity / 100;
 
-  // Kalkulasi ukuran asli berdasarkan persentase (100% = base value)
-  const actualScale = (scale / 100) * 24;
-  const actualThickness = (thickness / 100) * 1;
+  // Base scale (ukuran satu ubin pattern)
+  // 100% scale kita set ke 40px agar lebih leluasa
+  const actualScale = (scale / 100) * 40;
 
-  // Convert hex color to RGB for opacity control
+  // Hole Size (ukuran lubang)
+  // Semakin kecil thickness slider (13%), semakin kecil lubangnya (bentuk makin tebal)
+  // Semakin besar thickness slider (200%), semakin besar lubangnya (bentuk makin tipis)
+  const holeSize = (thickness / 200) * actualScale;
+
+  // Convert hex color to RGB
   const hexToRgb = (hex: string) => {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result
@@ -29,52 +35,51 @@ export function PatternRenderer({ type, color, opacity, thickness, scale }: Patt
   };
 
   const rgb = hexToRgb(color);
-  const rgbaColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${opacityDecimal})`;
+  /**
+   * Kita gunakan fill solid tapi dengan mask.
+   * Mask Putih = Terlihat (Solid Color)
+   * Mask Hitam = Berlubang (Transparan, memperlihatkan background)
+   */
+  const patternFillColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${opacityDecimal})`;
 
-  const renderPattern = () => {
+  const renderMaskContent = () => {
     switch (type) {
       case "grid":
-        return (
-          <pattern id={patternId} x="0" y="0" width={actualScale} height={actualScale} patternUnits="userSpaceOnUse">
-            <path d={`M ${actualScale} 0 L 0 0 0 ${actualScale}`} fill="none" stroke={rgbaColor} strokeWidth={actualThickness} />
-          </pattern>
-        );
+        // Melubangi kotak di tengah setiap sel
+        return <rect x={(actualScale - holeSize) / 2} y={(actualScale - holeSize) / 2} width={holeSize} height={holeSize} fill="black" />;
 
       case "dots":
-        return (
-          <pattern id={patternId} x="0" y="0" width={actualScale} height={actualScale} patternUnits="userSpaceOnUse">
-            <circle cx={actualScale / 2} cy={actualScale / 2} r={actualThickness} fill={rgbaColor} />
-          </pattern>
-        );
+        // Melubangi lingkaran di tengah
+        return <circle cx={actualScale / 2} cy={actualScale / 2} r={holeSize / 2} fill="black" />;
 
       case "stripes":
-        return (
-          <pattern id={patternId} x="0" y="0" width={actualScale} height={actualScale} patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-            <rect x="0" y="0" width={actualThickness} height={actualScale} fill={rgbaColor} />
-          </pattern>
-        );
+        // Melubangi garis vertikal
+        return <rect x={(actualScale - holeSize) / 2} y="0" width={holeSize} height={actualScale} fill="black" />;
 
       case "waves":
-        const waveHeight = actualScale / 4;
+        // Membuat "bidang" gelombang yang melubangi
         return (
-          <pattern id={patternId} x="0" y="0" width={actualScale} height={actualScale} patternUnits="userSpaceOnUse">
-            <path d={`M 0 ${actualScale / 2} Q ${actualScale / 4} ${actualScale / 2 - waveHeight}, ${actualScale / 2} ${actualScale / 2} T ${actualScale} ${actualScale / 2}`} fill="none" stroke={rgbaColor} strokeWidth={actualThickness} />
-          </pattern>
+          <path
+            d={`
+              M 0 ${actualScale / 2} 
+              Q ${actualScale / 4} ${actualScale / 2 - holeSize / 2}, ${actualScale / 2} ${actualScale / 2} 
+              T ${actualScale} ${actualScale / 2}
+              V ${actualScale} H 0 Z
+            `}
+            fill="black"
+          />
         );
 
       case "noise":
-        const dots = [];
-        const density = 20; // Fixed density per tile
-        for (let i = 0; i < density; i++) {
-          const x = (i * 137.5) % actualScale; // Pseudo-random positions
+        // Noise pixelated dengan lubang-lubang kecil random
+        const noiseDots = [];
+        const count = 15;
+        for (let i = 0; i < count; i++) {
+          const x = (i * 137.5) % actualScale;
           const y = (i * 253.1) % actualScale;
-          dots.push(<rect key={i} x={x} y={y} width={actualThickness} height={actualThickness} fill={rgbaColor} />);
+          noiseDots.push(<rect key={i} x={x} y={y} width={holeSize / 4} height={holeSize / 4} fill="black" />);
         }
-        return (
-          <pattern id={patternId} x="0" y="0" width={actualScale} height={actualScale} patternUnits="userSpaceOnUse">
-            {dots}
-          </pattern>
-        );
+        return noiseDots;
 
       default:
         return null;
@@ -82,9 +87,21 @@ export function PatternRenderer({ type, color, opacity, thickness, scale }: Patt
   };
 
   return (
-    <svg className="absolute inset-0 w-full h-full pointer-events-none">
-      <defs>{renderPattern()}</defs>
-      <rect width="100%" height="100%" fill={`url(#${patternId})`} />
+    <svg className="absolute inset-0 h-full w-full pointer-events-none">
+      <defs>
+        <mask id={maskId}>
+          {/* Base mask putih (artinya seluruh area terisi warna) */}
+          <rect width="100%" height="100%" fill="white" />
+          {/* Konten pattern sebagai lubang (hitam) */}
+          <pattern id={`${patternId}-mask`} x="0" y="0" width={actualScale} height={actualScale} patternUnits="userSpaceOnUse" patternTransform={type === "stripes" ? "rotate(45)" : ""}>
+            {renderMaskContent()}
+          </pattern>
+          <rect width="100%" height="100%" fill={`url(#${patternId}-mask)`} />
+        </mask>
+      </defs>
+
+      {/* Bidang solid yang dikenakan mask untuk membuat lubang pattern */}
+      <rect width="100%" height="100%" fill={patternFillColor} mask={`url(#${maskId})`} />
     </svg>
   );
 }

@@ -39,15 +39,16 @@ export async function updateLayout(layout: ProfileLayout) {
   try {
     const user = await getAuthenticatedUser();
 
-    await db.profile.update({
+    const updated = await db.profile.update({
       where: { userId: user.id },
       data: { layout },
+      select: profileEditorPayload,
     });
 
     revalidatePath("/dashboard");
     revalidatePath(`/${user.username}`);
 
-    return { success: true };
+    return { success: true, data: updated };
   } catch (error: any) {
     return { success: false, error: error.message || "Failed to update layout" };
   }

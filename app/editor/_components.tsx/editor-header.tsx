@@ -34,7 +34,7 @@ export default function EditorHeader({ profile }: EditorHeaderProps) {
         const updates = [];
 
         // Profile basic fields
-        if (draftProfile.displayName !== originalProfile?.displayName || draftProfile.bio !== originalProfile?.bio || draftProfile.avatarUrl !== originalProfile?.avatarUrl) {
+        if (draftProfile.displayName !== originalProfile?.displayName || draftProfile.bio !== originalProfile?.bio || draftProfile.avatarUrl !== originalProfile?.avatarUrl || draftProfile.layout !== originalProfile?.layout) {
           updates.push(updateProfile(draftProfile as any));
         }
 

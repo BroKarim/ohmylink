@@ -27,18 +27,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const avatarUrl = getAvatarUrl(user);
-  const profileUrl = `https://oneurl.live/${username}`;
+  const profileUrl = `https://dzenn.link/${username}`;
   const images = avatarUrl ? [{ url: avatarUrl, width: 400, height: 400, alt: `${user.name}'s profile picture` }] : [{ url: "/og.png", width: 1200, height: 630, alt: "OneURL" }];
 
   return {
-    title: `${user.name} | OneURL`,
-    description: user.profile?.bio || `Visit ${user.name}'s profile on OneURL`,
-    metadataBase: new URL("https://oneurl.live"),
+    title: `${user.name} | Dzenn`,
+    description: user.profile?.bio || `Visit ${user.name}'s profile on Dzenn`,
+    metadataBase: new URL("https://dzenn.link"),
     openGraph: {
-      title: `${user.name} | OneURL`,
-      description: user.profile?.bio || `Visit ${user.name}'s profile on OneURL`,
+      title: `${user.name} | Dzenn`,
+      description: user.profile?.bio || `Visit ${user.name}'s profile on Dzenn`,
       url: profileUrl,
-      siteName: "OneURL",
+      siteName: "Dzenn",
       images,
       locale: "en_US",
       type: "profile",

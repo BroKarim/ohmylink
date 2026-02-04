@@ -71,12 +71,7 @@ export function TexturedCard({ title, description, url, icon, imageUrl, videoUrl
             </motion.p>
           )}
           {videoUrl && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className="aspect-video w-full overflow-hidden rounded-xl bg-black/20 flex items-center justify-center  "
-            >
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="aspect-video w-full overflow-hidden rounded-xl bg-black/20 flex items-center justify-center  ">
               <PlayCircle className="h-10 w-10 text-white/50" />
             </motion.div>
           )}

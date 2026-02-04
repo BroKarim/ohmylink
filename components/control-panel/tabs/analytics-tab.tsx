@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import type * as React from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +16,7 @@ import { DeviceBreakdown } from "@/components/analytics/device-breakdown";
 import { BrowserBreakdown } from "@/components/analytics/browser-breakdown";
 import { OSBreakdown } from "@/components/analytics/os-breakdown";
 import { VisitorLocations } from "@/components/analytics/visitor-locations";
+import { getLinkAnalyticsAction, getProfileAnalyticsAction } from "@/server/user/analytics";
 
 interface ProfileStats {
   totalClicks: number;
@@ -88,10 +88,27 @@ export function AnalyticsTab({ profileId, links }: AnalyticsTabProps) {
   const { data: stats, isLoading: isLoadingStats } = useQuery({
     queryKey: ["analytics", selectedLinkId],
     queryFn: async () => {
-      const url = selectedLinkId ? `/api/analytics?linkId=${selectedLinkId}` : "/api/analytics";
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("Failed to fetch analytics");
-      return res.json();
+      if (selectedLinkId) {
+        // Get link-specific analytics
+        const result = await getLinkAnalyticsAction({
+          linkId: selectedLinkId,
+        });
+
+        if (!result.success) {
+          throw new Error(result.error);
+        }
+
+        return result.data;
+      } else {
+        // Get profile analytics
+        const result = await getProfileAnalyticsAction({});
+
+        if (!result.success) {
+          throw new Error(result.error);
+        }
+
+        return result.data;
+      }
     },
     enabled: !!profileId,
     refetchInterval: 10000,
@@ -125,18 +142,19 @@ export function AnalyticsTab({ profileId, links }: AnalyticsTabProps) {
     );
   }
 
-  const topLinksWithDetails = stats.topLinks
-    ? stats.topLinks
-        .map((item: { link_id: string; clicks: number }) => {
-          const link = links.find((l) => l.id === item.link_id);
-          return {
-            ...item,
-            title: link?.title || "Unknown",
-            url: link?.url || "",
-          };
-        })
-        .slice(0, 20)
-    : [];
+  const topLinksWithDetails =
+    "topLinks" in stats && stats.topLinks
+      ? stats.topLinks
+          .map((item: { link_id: string; clicks: number }) => {
+            const link = links.find((l) => l.id === item.link_id);
+            return {
+              ...item,
+              title: link?.title || "Unknown",
+              url: link?.url || "",
+            };
+          })
+          .slice(0, 20)
+      : [];
 
   const linkStats = stats as LinkStats;
   const profileStats = stats as ProfileStats;
@@ -213,12 +231,12 @@ export function AnalyticsTab({ profileId, links }: AnalyticsTabProps) {
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex-1 w-full sm:max-w-sm">
-            <Select value={selectedLinkId || ""} onValueChange={(value) => setSelectedLinkId(value || null)}>
+            <Select value={selectedLinkId || "all"} onValueChange={(value) => setSelectedLinkId(value === "all" ? null : value)}>
               <SelectTrigger className="w-full">
                 <SelectValue>{selectedLinkId ? selectedLink?.title : "Select a link to view analytics"}</SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Links</SelectItem>
+                <SelectItem value="all">All Links</SelectItem>
                 {links.map((link) => (
                   <SelectItem key={link.id} value={link.id}>
                     {link.title}

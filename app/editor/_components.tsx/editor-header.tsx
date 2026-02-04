@@ -164,18 +164,11 @@ export default function EditorHeader({ profile }: EditorHeaderProps) {
         </div>
 
         {/* Center: Save Button */}
-        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
+        <div className=" flex items-center gap-2">
           {isDirty && <span className="text-xs text-muted-foreground animate-pulse">Unsaved changes</span>}
           <Button onClick={handleSave} disabled={!isDirty || isPending} size="sm" variant={isDirty ? "default" : "outline"} className="gap-2">
             <Save className="h-4 w-4" />
             {isPending ? "Saving..." : "Save Changes"}
-          </Button>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <ModeSwitcher />
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <MoreVertical className="h-4 w-4" />
           </Button>
         </div>
       </div>

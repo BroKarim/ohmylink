@@ -219,7 +219,7 @@ export function LinkCardEditor({ profile, onUpdate }: LinkCardEditorProps) {
     <div className="space-y-3">
       {!isAdding && (
         <div className="flex justify-end">
-          <Button2 onClick={() => setIsAdding(true)} variant="blue"  className="w-1/3 rounded-md">
+          <Button2 onClick={() => setIsAdding(true)} variant="blue" className="w-1/3 rounded-md">
             <Plus className="h-3.5 w-3.5 group-hover:scale-110 transition-transform" />
             <span>Add link</span>
           </Button2>

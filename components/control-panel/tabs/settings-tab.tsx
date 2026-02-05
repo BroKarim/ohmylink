@@ -55,6 +55,10 @@ export function SettingsTab({ profile }: SettingsTabProps) {
 
         // Redirect to new username if changed
         if (username !== profile.username) {
+          // Clear localStorage when username changes (new profile context)
+          if (typeof window !== "undefined") {
+            localStorage.removeItem("dzenn-editor-draft");
+          }
           router.push(`/editor/${username}`);
         } else {
           router.refresh();
@@ -80,6 +84,11 @@ export function SettingsTab({ profile }: SettingsTabProps) {
 
       toast.success("Profile deleted successfully", { id: toastId });
 
+      // Clear localStorage to prevent stale data
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("dzenn-editor-draft");
+      }
+
       // Redirect based on result
       if (result.redirect) {
         router.push(result.redirect);
@@ -96,6 +105,10 @@ export function SettingsTab({ profile }: SettingsTabProps) {
       await authClient.signOut({
         fetchOptions: {
           onSuccess: () => {
+            // Clear localStorage on logout
+            if (typeof window !== "undefined") {
+              localStorage.removeItem("dzenn-editor-draft");
+            }
             toast.success("Logged out successfully", { id: toastId });
             router.push("/");
           },
@@ -110,15 +123,9 @@ export function SettingsTab({ profile }: SettingsTabProps) {
   };
 
   return (
-    <Card className="border-none">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Settings className="h-4 w-4" />
-          Settings
-        </CardTitle>
-        <CardDescription>Manage your profile settings</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
+    <div className="px-3 pb-4">
+      <p className="text-sm text-muted-foreground">Manage your profile settings</p>
+      <div className="space-y-6">
         {/* Username Section */}
         <div className="space-y-3">
           <div className="flex items-center gap-2">
@@ -127,10 +134,19 @@ export function SettingsTab({ profile }: SettingsTabProps) {
               Username
             </Label>
           </div>
-          <Input id="username" value={username} onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))} placeholder="your-username" className="max-w-md" />
-          <p className="text-xs text-muted-foreground">
-            Your profile will be available at: <span className="font-mono">dzenn.link/{username}</span>
-          </p>
+          <div className="relative flex items-center w-full max-w-md">
+            <div className="relative flex-1 flex items-center overflow-hidden">
+              <div className="absolute left-4 text-sm text-muted-foreground font-medium pointer-events-none">dzenn.link/</div>
+              <input
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+                placeholder="your-username"
+                className="w-full text-sm pl-[88px] pr-4 py-2 h-10 transition-all bg-muted/30 hover:bg-muted/50 border border-border rounded-full text-foreground font-medium focus:outline-none focus:ring-1 focus:ring-primary/20"
+              />
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground">Choose a unique username for your profile URL</p>
         </div>
 
         <Separator />
@@ -206,7 +222,7 @@ export function SettingsTab({ profile }: SettingsTabProps) {
             Logout
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

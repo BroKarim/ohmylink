@@ -11,7 +11,7 @@ interface ThemeTabProps {
 
 export function ThemeTab({ profile, onUpdate }: ThemeTabProps) {
   return (
-    <div className="space-y-2 px-3 pb-4">
+    <div className=" px-3 pb-4">
       <div className="space-y-6">
         <BackgroundOptions profile={profile} onUpdate={onUpdate} />
         <BackgroundPattern profile={profile} onUpdate={onUpdate} />

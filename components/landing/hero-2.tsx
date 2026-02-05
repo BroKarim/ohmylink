@@ -22,14 +22,7 @@ export function Hero() {
     } else {
       // If logged in, go to editor/onboarding
       // Check if user has a username already
-      const user = session.user as { username?: string | null };
-      const currentUsername = user.username;
-
-      if (currentUsername) {
-        router.push(`/editor/${currentUsername}`);
-      } else {
-        router.push("/onboarding/username");
-      }
+      router.push("/editor");
     }
   };
 

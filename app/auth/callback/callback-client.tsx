@@ -17,11 +17,8 @@ export function CallbackClient({ redirectTo }: CallbackClientProps) {
   }, [router, redirectTo]);
 
   const getMessage = () => {
-    if (redirectTo.startsWith("/editor")) {
+    if (redirectTo.startsWith("/editor") || redirectTo === "/editor") {
       return "Taking you to your editor";
-    }
-    if (redirectTo === "/onboarding/username") {
-      return "Setting up your profile";
     }
     if (redirectTo === "/login") {
       return "Redirecting to login";

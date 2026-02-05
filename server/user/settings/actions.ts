@@ -130,3 +130,115 @@ export async function ensureUserHasProfile() {
 
   return { success: true, username };
 }
+
+export async function updateProfileUsername(username: string) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const formattedUsername = username.toLowerCase().trim();
+
+  // Check availability
+  const existing = await db.profile.findUnique({
+    where: { username: formattedUsername },
+  });
+
+  if (existing && existing.userId !== session.user.id) {
+    return { success: false, error: "Username is already taken" };
+  }
+
+  // Get user's profile
+  const profile = await db.profile.findFirst({
+    where: { userId: session.user.id },
+  });
+
+  if (!profile) {
+    return { success: false, error: "Profile not found" };
+  }
+
+  // Update username
+  await db.profile.update({
+    where: { id: profile.id },
+    data: { username: formattedUsername },
+  });
+
+  revalidatePath("/editor");
+  revalidatePath(`/editor/${formattedUsername}`);
+  return { success: true, username: formattedUsername };
+}
+
+export async function togglePublishStatus(isPublished: boolean) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const profile = await db.profile.findFirst({
+    where: { userId: session.user.id },
+  });
+
+  if (!profile) {
+    return { success: false, error: "Profile not found" };
+  }
+
+  await db.profile.update({
+    where: { id: profile.id },
+    data: { isPublished },
+  });
+
+  revalidatePath("/editor");
+  revalidatePath(`/${profile.username}`);
+  return { success: true };
+}
+
+export async function deleteProfileOrAccount() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session?.user) throw new Error("Unauthorized");
+
+  // Get all user profiles
+  const user = await db.user.findUnique({
+    where: { id: session.user.id },
+    include: { profiles: true },
+  });
+
+  if (!user) {
+    return { success: false, error: "User not found" };
+  }
+
+  const profileCount = user.profiles.length;
+
+  if (profileCount === 0) {
+    return { success: false, error: "No profile to delete" };
+  }
+
+  if (profileCount === 1) {
+    // Delete entire user account (cascade will delete profile)
+    await db.user.delete({
+      where: { id: session.user.id },
+    });
+
+    // Sign out user
+    await auth.api.signOut({
+      headers: await headers(),
+    });
+
+    return { success: true, redirect: "/" };
+  } else {
+    // Delete current profile, redirect to another
+    const currentProfile = user.profiles[0];
+    const otherProfile = user.profiles.find((p) => p.id !== currentProfile.id);
+
+    await db.profile.delete({
+      where: { id: currentProfile.id },
+    });
+
+    revalidatePath("/editor");
+    return {
+      success: true,
+      redirect: otherProfile ? `/editor/${otherProfile.username}` : "/editor",
+    };
+  }
+}

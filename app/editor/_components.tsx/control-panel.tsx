@@ -20,7 +20,7 @@ export default function ControlPanel({ profile, onUpdate }: ControlPanelProps) {
         {activeTab === "profile" && <ProfileTab profile={profile} onUpdate={onUpdate} />}
         {activeTab === "theme" && <ThemeTab profile={profile} onUpdate={onUpdate} />}
         {activeTab === "analytic" && <AnalyticsTab profileId={profile.id} links={profile.links} />}
-        {activeTab === "setting" && <SettingsTab />}
+        {activeTab === "setting" && <SettingsTab profile={profile} />}
       </div>
     </div>
   );

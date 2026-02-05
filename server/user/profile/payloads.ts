@@ -19,6 +19,7 @@ export const profileEditorPayload = {
   cardTexture: true,
   bgEffects: true,
   bgPattern: true,
+  isPublished: true,
   socials: { select: { id: true, platform: true, url: true }, orderBy: { position: "asc" } },
   links: {
     select: {

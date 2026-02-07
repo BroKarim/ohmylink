@@ -110,7 +110,7 @@ export function Dock({ className, children, maxAdditionalSize = 5, iconSize = 40
 
   return (
     <div className="flex justify-center w-full">
-      <nav ref={dockRef} role="navigation" aria-label="Main Dock" className="pointer-events-auto">
+      <nav ref={dockRef} role="navigation" aria-label="Main Dock" className="pointer-events-auto ">
         <ul
           className={cn("flex items-center rounded-2xl border border-gray-100 bg-linear-to-t from-neutral-50 to-white p-1 dark:border-zinc-900 dark:from-zinc-950 dark:to-zinc-900 shadow-xl backdrop-blur-md", className)}
           style={{

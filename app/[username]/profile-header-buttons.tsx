@@ -20,17 +20,7 @@ export function ProfileHeaderButtons({ name, username, avatarUrl }: ProfileHeade
   return (
     <>
       <TooltipProvider>
-        <div className="flex items-center justify-between">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link href="/" className="font-bold text-xl tracking-tighter hover:opacity-80 transition-opacity flex items-center gap-1">
-                <span className="text-white">oh</span>
-                <span className="text-primary text-2xl">!</span>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent>Go to home</TooltipContent>
-          </Tooltip>
-
+        <div className="flex items-center justify-end">
           <Tooltip>
             <TooltipTrigger asChild>
               <button

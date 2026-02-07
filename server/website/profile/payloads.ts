@@ -12,6 +12,8 @@ export const publicProfilePayload = {
   avatarUrl: true,
   layout: true,
   isPublished: true,
+  theme: true,
+  padding: true,
 
   // User Info (via relation)
   user: {

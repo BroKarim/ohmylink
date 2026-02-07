@@ -94,8 +94,18 @@ export function LinkEditDialog({ link, open, onOpenChange, onSave }: LinkEditDia
       try {
         const uploadResult = await uploadMedia(result, file.name, "icon");
         if (uploadResult.success && uploadResult.url) {
-          setEditData({ ...editData, icon: uploadResult.url });
-          toast.success("Icon uploaded!", { id: uploadToast });
+          const updatedData = { ...editData, icon: uploadResult.url };
+          setEditData(updatedData);
+
+          // Immediately update the link in the store to trigger isDirty
+          if (link) {
+            onSave({
+              ...link,
+              icon: uploadResult.url,
+            });
+          }
+
+          toast.success("Icon uploaded and applied to draft!", { id: uploadToast });
         } else {
           toast.error(uploadResult.error || "Failed to upload icon", { id: uploadToast });
           setIconPreview(editData.icon);
@@ -128,12 +138,23 @@ export function LinkEditDialog({ link, open, onOpenChange, onSave }: LinkEditDia
       try {
         const uploadResult = await uploadMedia(result, file.name, "media");
         if (uploadResult.success && uploadResult.url) {
-          setEditData({
+          const updatedData = {
             ...editData,
             mediaUrl: uploadResult.url,
-            mediaType: "image",
-          });
-          toast.success("Media uploaded!", { id: uploadToast });
+            mediaType: "image" as const,
+          };
+          setEditData(updatedData);
+
+          // Immediately update the link in the store to trigger isDirty
+          if (link) {
+            onSave({
+              ...link,
+              mediaUrl: uploadResult.url,
+              mediaType: "image" as const,
+            });
+          }
+
+          toast.success("Media uploaded and applied to draft!", { id: uploadToast });
         } else {
           toast.error(uploadResult.error || "Failed to upload media", { id: uploadToast });
           setMediaPreview(editData.mediaUrl);

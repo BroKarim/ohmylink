@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button2 } from "@/components/ui/button-2";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Grid3x3, Sparkles, Circle, Waves, StretchHorizontal, Grid2x2, RotateCcw } from "lucide-react";
@@ -59,10 +59,10 @@ export default function BackgroundPattern({ profile, onUpdate }: BackgroundPatte
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="w-full">
+        <Button2 variant="blue" className="flex-1 rounded-full">
           <Grid3x3 className="h-4 w-4 mr-2" />
-          Background Pattern
-        </Button>
+         Pattern
+        </Button2>
       </PopoverTrigger>
       <PopoverContent className="w-80" align="start">
         <div className="space-y-4">
@@ -71,9 +71,9 @@ export default function BackgroundPattern({ profile, onUpdate }: BackgroundPatte
               <h4 className="font-medium text-sm leading-none">Background Pattern</h4>
               <p className="text-xs text-muted-foreground leading-relaxed">Add geometric patterns to your background</p>
             </div>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={handleReset} title="Reset to defaults">
+            <Button2 variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={handleReset} title="Reset to defaults">
               <RotateCcw className="h-4 w-4" />
-            </Button>
+            </Button2>
           </div>
 
           {/* Pattern Type Selector */}

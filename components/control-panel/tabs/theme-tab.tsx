@@ -15,9 +15,11 @@ export function ThemeTab({ profile, onUpdate }: ThemeTabProps) {
     <div className=" px-3 pb-4">
       <div className="space-y-6">
         <ThemeSelector profile={profile} onUpdate={onUpdate} />
+        <div className="w-full flex gap-x-2 justify-between items-center">
+          <BackgroundPattern profile={profile} onUpdate={onUpdate} />
+          <BackgroundEffect profile={profile} onUpdate={onUpdate} />
+        </div>
         <BackgroundOptions profile={profile} onUpdate={onUpdate} />
-        <BackgroundPattern profile={profile} onUpdate={onUpdate} />
-        <BackgroundEffect profile={profile} onUpdate={onUpdate} />
         <CardTextureSelector profile={profile} onUpdate={onUpdate} />
       </div>
     </div>

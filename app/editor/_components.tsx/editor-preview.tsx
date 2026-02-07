@@ -13,22 +13,18 @@ interface PreviewProps {
 export default function Preview({ profile, viewMode }: PreviewProps) {
   const theme = getThemeById(profile.theme);
 
-  // Dynamically load font when theme changes
   useEffect(() => {
     if (!theme.fontUrl) return;
 
-    // Check if font is already loaded
     const fontId = `theme-font-${theme.id}`;
     if (document.getElementById(fontId)) return;
 
-    // Create and inject font link
     const link = document.createElement("link");
     link.id = fontId;
     link.rel = "stylesheet";
     link.href = theme.fontUrl;
     document.head.appendChild(link);
 
-    // Cleanup when component unmounts
     return () => {
       const existingLink = document.getElementById(fontId);
       if (existingLink) {
@@ -54,12 +50,12 @@ export default function Preview({ profile, viewMode }: PreviewProps) {
           <PreviewBackground profile={profile} />
 
           <div className="relative h-full overflow-y-auto no-scrollbar" style={{ padding: `${profile.padding}px` }}>
-            <div className="mx-auto flex w-full max-w-[420px] flex-col items-center pb-10 pt-12">
+            <div className="mx-auto space-y-4 flex w-full max-w-[420px] flex-col items-center pb-24 pt-12">
               <PreviewProfile profile={profile} />
-              <PreviewSocials profile={profile} />
               <PreviewLinks profile={profile} />
             </div>
           </div>
+          <PreviewSocials profile={profile} />
         </div>
       </div>
     </div>

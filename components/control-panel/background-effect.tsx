@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button2 } from "@/components/ui/button-2";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Sparkles, Sun, Droplets, Contrast, EyeOff, Settings2, RotateCcw } from "lucide-react";
@@ -53,10 +53,10 @@ export default function BackgroundEffects({ profile, onUpdate }: BackgroundEffec
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="w-full">
+        <Button2 variant="blue" className="flex-1 rounded-full">
           <Settings2 className="h-4 w-4 mr-2" />
-          Background Effects
-        </Button>
+          Effects
+        </Button2>
       </PopoverTrigger>
       <PopoverContent className="w-80" align="start">
         <div className="space-y-4">
@@ -65,9 +65,9 @@ export default function BackgroundEffects({ profile, onUpdate }: BackgroundEffec
               <h4 className="font-medium text-sm leading-none">Background Effects</h4>
               <p className="text-xs text-muted-foreground leading-relaxed">Adjust visual effects for your background</p>
             </div>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={handleReset} title="Reset to defaults">
+            <Button2 variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={handleReset} title="Reset to defaults">
               <RotateCcw className="h-4 w-4" />
-            </Button>
+            </Button2>
           </div>
 
           <div className="space-y-4">

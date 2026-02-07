@@ -3,7 +3,8 @@ export type ProfileTheme = {
   name: string;
   type: "light" | "dark";
   variables: Record<string, string>;
-  fontUrl?: string; // Google Fonts URL for dynamic loading
+  fontUrl?: string;
+  icon?: string;
 };
 
 export const THEMES: Record<string, ProfileTheme> = {
@@ -17,6 +18,7 @@ export const THEMES: Record<string, ProfileTheme> = {
       "--card": "oklch(0.15 0 0 / 0.4)",
       "--card-foreground": "oklch(0.98 0 0)",
       "--card-border": "oklch(1 0 0 / 0.1)",
+      "--primary": "oklch(0.985 0 0)",
       "--accent": "oklch(0.205 0 0)",
       "--font-sans": "Inter, sans-serif",
       "--radius": "1.25rem",
@@ -60,6 +62,7 @@ export const THEMES: Record<string, ProfileTheme> = {
     id: "supabase",
     name: "Supabase",
     type: "light",
+    icon: "supabase",
     fontUrl: "https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap",
     variables: {
       "--foreground": "oklch(0.2046 0 0)",
@@ -77,6 +80,7 @@ export const THEMES: Record<string, ProfileTheme> = {
     id: "twitter",
     name: "Twitter",
     type: "light",
+    icon: "twitter",
     fontUrl: "https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap",
     variables: {
       "--foreground": "oklch(0.1884 0.0128 248.5103)",
@@ -93,6 +97,7 @@ export const THEMES: Record<string, ProfileTheme> = {
     id: "vercel",
     name: "Vercel",
     type: "light",
+    icon: "vercel",
     fontUrl: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
     variables: {
       "--foreground": "oklch(0 0 0)",
@@ -101,7 +106,7 @@ export const THEMES: Record<string, ProfileTheme> = {
       "--card": "oklch(1 0 0 / 0.9)",
       "--card-foreground": "oklch(0 0 0)",
       "--accent": "oklch(0.94 0 0)",
-      "--font-sans": "Geist, sans-serif",
+      "--font-sans": "Inter, sans-serif",
       "--radius": "0.5rem",
     },
   },
@@ -109,6 +114,7 @@ export const THEMES: Record<string, ProfileTheme> = {
     id: "claude",
     name: "Claude",
     type: "light",
+    icon: "claude",
     fontUrl: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
     variables: {
       "--foreground": "oklch(0.3438 0.0269 95.7226)",

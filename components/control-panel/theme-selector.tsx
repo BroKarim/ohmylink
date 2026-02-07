@@ -1,12 +1,13 @@
 "use client";
 
 import { Label } from "@/components/ui/label";
-import { THEMES } from "@/lib/themes";
+import { THEMES, ProfileTheme } from "@/lib/themes";
 import type { ProfileEditorData } from "@/server/user/profile/payloads";
-import { Check } from "lucide-react";
 import { updateTheme } from "@/server/user/profile/actions";
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Icons } from "@/components/icons";
 
 interface ThemeSelectorProps {
   profile: ProfileEditorData;
@@ -37,47 +38,42 @@ export function ThemeSelector({ profile, onUpdate }: ThemeSelectorProps) {
     };
   }, [profile.theme]);
 
+  const renderIcon = (theme: ProfileTheme) => {
+    if (theme.icon && Icons[theme.icon as keyof typeof Icons]) {
+      const Icon = Icons[theme.icon as keyof typeof Icons];
+      return <Icon className="h-4 w-4 shrink-0" />;
+    }
+    return <div className="h-4 w-4 shrink-0 rounded-full border border-black/5 dark:border-white/10 shadow-sm" style={{ background: theme.variables["--primary"] || theme.variables["--foreground"] }} />;
+  };
+
   return (
     <div className="space-y-3">
-      <Label className="text-xs tracking-wider text-muted-foreground">Theme Preset</Label>
-      <div className="grid grid-cols-2 gap-2">
-        {themes.map((theme) => {
-          const isActive = profile.theme === theme.id;
-
-          return (
-            <button
-              key={theme.id}
-              onClick={() => onUpdate({ ...profile, theme: theme.id })}
-              className={`
-                relative group rounded-xl p-3 border transition-all duration-200
-                ${isActive ? "border-primary bg-primary/5 shadow-sm" : "border-border hover:border-primary/50 hover:bg-accent/50"}
-              `}
-            >
-              {/* Theme Preview */}
-              <div className="flex items-center gap-2 mb-2">
-                <div
-                  className="h-8 w-8 rounded-lg border"
-                  style={{
-                    background: theme.variables["--card"],
-                    borderColor: theme.variables["--card-border"] || theme.variables["--border"],
-                  }}
-                />
-                <div className="flex-1 text-left">
-                  <p className="text-xs font-semibold">{theme.name}</p>
-                  <p className="text-[10px] text-muted-foreground capitalize">{theme.type}</p>
+      <Label className="text-xs tracking-wider text-muted-foreground  font-semibold">Theme Preset</Label>
+      <Select value={profile.theme} onValueChange={(value) => onUpdate({ ...profile, theme: value })}>
+        <SelectTrigger className="w-full h-12 bg-zinc-50 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800/80 transition-colors">
+          <SelectValue placeholder="Select a theme">
+            {profile.theme && (
+              <div className="flex items-center gap-3">
+                {renderIcon(THEMES[profile.theme] || THEMES["default"])}
+                <span className="font-medium">{(THEMES[profile.theme] || THEMES["default"]).name}</span>
+              </div>
+            )}
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent side="bottom" align="start" className="rounded-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-2xl">
+          {themes.map((theme) => (
+            <SelectItem key={theme.id} value={theme.id} className="focus:bg-zinc-100 dark:focus:bg-zinc-800 rounded-lg m-1 py-3 px-3 cursor-pointer">
+              <div className="flex items-center gap-3">
+                {renderIcon(theme)}
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium">{theme.name}</span>
+                  <span className="text-[10px] text-muted-foreground capitalize opacity-70">{theme.type} mode</span>
                 </div>
               </div>
-
-              {/* Active Indicator */}
-              {isActive && (
-                <div className="absolute top-2 right-2 h-5 w-5 rounded-full bg-primary flex items-center justify-center">
-                  <Check className="h-3 w-3 text-primary-foreground" />
-                </div>
-              )}
-            </button>
-          );
-        })}
-      </div>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

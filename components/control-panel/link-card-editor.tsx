@@ -7,7 +7,7 @@ import { Plus, Trash2, Link as LinkIcon, CreditCard, Image as ImageIcon, Loader2
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import type { ProfileEditorData } from "@/server/user/profile/payloads";
-import { createLink, uploadMedia } from "@/server/user/links/actions";
+import { uploadMedia } from "@/server/user/links/actions";
 import { LinkEditDialog } from "./link-edit-dialog";
 import { toast } from "sonner";
 import { Button2 } from "@/components/ui/button-2";
@@ -64,6 +64,7 @@ export function LinkCardEditor({ profile, onUpdate }: LinkCardEditorProps) {
       try {
         const uploadResult = await uploadMedia(result, file.name, "icon");
         if (uploadResult.success && uploadResult.url) {
+          // Store old icon for cleanup during save (handled by editor-header)
           setNewLink({ ...newLink, icon: uploadResult.url });
           toast.success("Icon uploaded!", { id: uploadToast });
         } else {

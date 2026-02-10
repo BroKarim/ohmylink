@@ -26,22 +26,20 @@ interface TexturedCardProps extends Partial<LinkItem> {
 
 export function TexturedCard({ title, description, url, icon, imageUrl, videoUrl, isStripeEnabled, backgroundColor = "bg-zinc-800", titleColor = "text-white", texture = "base", className = "" }: TexturedCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const hasExtraContent = !!(description || videoUrl || isStripeEnabled);
+  const hasExtraContent = !!(description || imageUrl || videoUrl || isStripeEnabled);
 
   const CardHeader = (
-    <div className="flex h-16 rounded-md w-full items-center">
-      <div className={`flex flex-1 items-center ${!imageUrl ? "justify-center px-6" : "justify-start pl-6"}`}>
-        <div className="flex items-center gap-3">
-          {icon && (
-            <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full border border-white/10">
-              <Image src={icon} fill className="object-cover" alt="" sizes="32px" />
-            </div>
-          )}
-          <h2 className={`${texture === "glassy" ? "text-white" : titleColor} text-lg font-semibold tracking-tighter max-w-[200px] `}>{title}</h2>
-        </div>
+    <div className="relative flex h-16 w-full items-center justify-center px-6">
+      <div className="flex items-center gap-3 z-10">
+        {icon && (
+          <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full border border-white/10">
+            <Image src={icon} fill className="object-cover" alt="" sizes="32px" />
+          </div>
+        )}
+        <h2 className={`${texture === "glassy" ? "text-white" : titleColor} text-lg font-semibold tracking-tighter max-w-[200px] truncate`}>{title}</h2>
       </div>
       {imageUrl && (
-        <div className="relative flex w-20 items-center justify-center pl-2 h-full overflow-hidden">
+        <div className={`absolute right-0 top-0 h-full w-20 overflow-hidden rounded-r-md transition-opacity duration-300 ${isExpanded ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
           <Image src={imageUrl} fill className="object-cover shadow-sm" alt={title || ""} sizes="80px" />
         </div>
       )}
@@ -74,6 +72,11 @@ export function TexturedCard({ title, description, url, icon, imageUrl, videoUrl
             <motion.p initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="text-sm text-white/80 leading-relaxed">
               {description}
             </motion.p>
+          )}
+          {imageUrl && !videoUrl && (
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="aspect-video w-full overflow-hidden rounded-xl bg-black/20 relative">
+              <Image src={imageUrl} fill className="object-cover" alt={title || ""} />
+            </motion.div>
           )}
           {videoUrl && (
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="aspect-video w-full overflow-hidden rounded-xl bg-black/20 flex items-center justify-center  ">

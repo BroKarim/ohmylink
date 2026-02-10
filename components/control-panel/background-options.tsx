@@ -128,7 +128,11 @@ export default function BackgroundOptions({ profile, onUpdate }: BackgroundOptio
 
       <TabsContent value="wallpaper" className="space-y-4 pt-4">
         {isLoadingWallpapers ? (
-          <div className="flex items-center justify-center py-8 text-sm text-muted-foreground">Loading wallpapers...</div>
+          <div className="grid grid-cols-3 gap-2">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="h-20 w-full animate-pulse rounded-lg bg-muted/50" />
+            ))}
+          </div>
         ) : wallpaperPresets.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-muted-foreground/20 bg-muted/10 py-12 text-center">
             <ImageIcon className="h-8 w-8 text-muted-foreground/50" />
@@ -146,7 +150,7 @@ export default function BackgroundOptions({ profile, onUpdate }: BackgroundOptio
                 }`}
                 title={preset.name}
               >
-                <Image src={preset.url} fill className="object-cover" alt={preset.name} sizes="(max-width: 768px) 33vw, 100px" />
+                <Image src={preset.url} fill className="object-cover transition-transform duration-500 group-hover:scale-110" alt={preset.name} sizes="(max-width: 768px) 33vw, 100px" />
                 {profile.bgWallpaper === preset.url && <div className="absolute inset-0 bg-primary/10 border-2 border-primary/30" />}
               </button>
             ))}
@@ -154,6 +158,14 @@ export default function BackgroundOptions({ profile, onUpdate }: BackgroundOptio
         )}
       </TabsContent>
       <TabsContent value="image" className="space-y-4 pt-4">
+        <div className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-muted-foreground/20 bg-muted/10 py-12 text-center">
+          {/* <Upload className="h-8 w-8 text-muted-foreground/50" />
+          <p className="text-sm font-medium text-muted-foreground">Custom Image Upload</p> */}
+          <span className="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest border border-primary/20 mt-1">Coming Soon</span>
+          {/* <p className="text-[10px] text-muted-foreground/70 max-w-[180px] mt-1">We're optimizing our storage to give you the best performance.</p> */}
+        </div>
+
+        {/* Original Upload Logic - Temporarily Hidden
         <div className="flex flex-col gap-4">
           <div className="relative group flex h-32 w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-muted transition-colors hover:border-primary/50">
             {profile.bgImage ? (
@@ -172,6 +184,7 @@ export default function BackgroundOptions({ profile, onUpdate }: BackgroundOptio
             </Button>
           )}
         </div>
+        */}
       </TabsContent>
     </Tabs>
   );

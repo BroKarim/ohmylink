@@ -1,10 +1,9 @@
 "use client";
 
-import { Save, MoreVertical } from "lucide-react";
+import { Save, RotateCcw, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { DomainView } from "@/components/domain-view";
-import { ModeSwitcher } from "@/components/mode-switcher";
 import { ProfileEditorData } from "@/server/user/profile/payloads";
 import { useEditorStore } from "@/lib/stores/editor-store";
 import { useTransition } from "react";
@@ -21,7 +20,7 @@ export default function EditorHeader({ profile }: EditorHeaderProps) {
   const username = profile.username || "user";
   const fullUrl = `${baseUrl}/${username}`;
 
-  const { isDirty, markAsSaved, originalProfile, draftProfile } = useEditorStore();
+  const { isDirty, markAsSaved, originalProfile, draftProfile, discardChanges } = useEditorStore();
   const [isPending, startTransition] = useTransition();
 
   const handleSave = async () => {
@@ -163,12 +162,38 @@ export default function EditorHeader({ profile }: EditorHeaderProps) {
           />
         </div>
 
-        {/* Center: Save Button */}
-        <div className=" flex items-center gap-2">
-          {isDirty && <span className="text-xs text-muted-foreground animate-pulse">Unsaved changes</span>}
-          <Button onClick={handleSave} disabled={!isDirty || isPending} size="sm" variant={isDirty ? "default" : "outline"} className="gap-2">
-            <Save className="h-4 w-4" />
-            {isPending ? "Saving..." : "Save Changes"}
+        {/* Center: Save & Discard Buttons */}
+        <div className="flex items-center gap-3">
+          {isDirty && (
+            <div className="flex items-center gap-2 animate-in fade-in slide-in-from-right-2 duration-300">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mr-1">Unsaved</span>
+              <Button
+                onClick={() => {
+                  discardChanges();
+                  toast.info("Changes discarded");
+                }}
+                disabled={isPending}
+                size="sm"
+                variant="ghost"
+                className="h-8 gap-1.5 text-xs hover:bg-destructive/10 hover:text-destructive transition-colors group px-2"
+              >
+                <div className="group-hover:rotate-[-45deg] transition-transform duration-300">
+                  <RotateCcw className="h-3.5 w-3.5" />
+                </div>
+                Discard
+              </Button>
+            </div>
+          )}
+
+          <Button onClick={handleSave} disabled={!isDirty || isPending} size="sm" variant={isDirty ? "default" : "outline"} className="h-9 gap-2 shadow-sm relative overflow-hidden">
+            {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+            <span className="font-semibold text-xs lowercase">{isPending ? "Saving..." : "Save Changes"}</span>
+            {isDirty && !isPending && (
+              <span className="absolute right-0 top-0 flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-foreground opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-foreground"></span>
+              </span>
+            )}
           </Button>
         </div>
       </div>

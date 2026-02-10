@@ -212,7 +212,7 @@ export function LinkCardEditor({ profile, onUpdate }: LinkCardEditorProps) {
 
   const typeOptions = [
     { id: "url" as LinkType, icon: LinkIcon, label: "URL" },
-    { id: "payment" as LinkType, icon: CreditCard, label: "Payment" },
+    // { id: "payment" as LinkType, icon: CreditCard, label: "Payment" },
     { id: "media" as LinkType, icon: ImageIcon, label: "Media" },
   ];
 
@@ -272,22 +272,27 @@ export function LinkCardEditor({ profile, onUpdate }: LinkCardEditorProps) {
             {/* Dynamic Content Based on Type */}
             {selectedType === "url" && <Input value={newLink.url} onChange={(e) => setNewLink({ ...newLink, url: e.target.value })} placeholder="https://example.com" className="h-10 text-sm" />}
 
-            {selectedType === "payment" && (
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handlePaymentSelect("stripe")}
-                  className={`flex-1 py-2 px-3 rounded-lg border text-xs font-medium transition-all ${newLink.paymentProvider === "stripe" ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/50"}`}
-                >
-                  Stripe
-                </button>
-                <button
-                  onClick={() => handlePaymentSelect("lemonsqueezy")}
-                  className={`flex-1 py-2 px-3 rounded-lg border text-xs font-medium transition-all ${newLink.paymentProvider === "lemonsqueezy" ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/50"}`}
-                >
-                  Lemon Squeezy
-                </button>
+            {/* {selectedType === "payment" && (
+              <div className="relative">
+                <div className="flex gap-2 filter grayscale opacity-50 pointer-events-none">
+                  <button
+                    onClick={() => handlePaymentSelect("stripe")}
+                    className={`flex-1 py-2 px-3 rounded-lg border text-xs font-medium transition-all ${newLink.paymentProvider === "stripe" ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/50"}`}
+                  >
+                    Stripe
+                  </button>
+                  <button
+                    onClick={() => handlePaymentSelect("lemonsqueezy")}
+                    className={`flex-1 py-2 px-3 rounded-lg border text-xs font-medium transition-all ${newLink.paymentProvider === "lemonsqueezy" ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/50"}`}
+                  >
+                    Lemon Squeezy
+                  </button>
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  <span className="bg-background/80 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-border shadow-sm">Coming Soon</span>
+                </div>
               </div>
-            )}
+            )} */}
 
             {selectedType === "media" && (
               <div className="relative">

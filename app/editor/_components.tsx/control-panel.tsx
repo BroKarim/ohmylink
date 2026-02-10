@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { TabNavigation, TabType, ProfileTab, ThemeTab, AnalyticsTab, SettingsTab } from "@/components/control-panel";
+import { AnalyticsTabSoon } from "@/components/control-panel/analytics-tab-soon";
 import type { ProfileEditorData } from "@/server/user/profile/payloads";
 
 interface ControlPanelProps {
@@ -19,7 +20,7 @@ export default function ControlPanel({ profile, onUpdate }: ControlPanelProps) {
       <div className="flex-1">
         {activeTab === "profile" && <ProfileTab profile={profile} onUpdate={onUpdate} />}
         {activeTab === "theme" && <ThemeTab profile={profile} onUpdate={onUpdate} />}
-        {activeTab === "analytic" && <AnalyticsTab profileId={profile.id} links={profile.links} />}
+        {activeTab === "analytic" && <AnalyticsTabSoon />}
         {activeTab === "setting" && <SettingsTab profile={profile} />}
       </div>
     </div>

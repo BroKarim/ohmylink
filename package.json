@@ -91,6 +91,9 @@
   ],
   "trustedDependencies": [
     "sharp",
-    "unrs-resolver"
+    "unrs-resolver",
+    "prisma",
+    "@prisma/engines",
+    "@prisma/client"
   ]
 }

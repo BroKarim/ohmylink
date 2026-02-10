@@ -2,18 +2,10 @@
 nixPkgs = ["nodejs_22", "openssl"]
 
 [phases.install]
-cmds = [
-  "corepack enable",
-  "corepack prepare pnpm@latest --activate",
-  "pnpm install --frozen-lockfile"
-]
+cmds = ["npm install -g pnpm@latest && npx pnpm install --frozen-lockfile"]
 
 [phases.build]
-# Tambahkan npx prisma generate jika tidak ada di postinstall package.json
-cmds = [
-  "npx prisma generate", 
-  "pnpm run build"
-]
+cmds = ["npx pnpm run build"]
 
 [start]
-cmd = "pnpm start"
+cmd = "npx pnpm start"

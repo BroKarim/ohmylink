@@ -32,6 +32,8 @@ COPY . .
 # Set environment variables untuk build
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+# Dummy DATABASE_URL untuk Prisma generate (tidak digunakan saat runtime)
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 
 # Generate Prisma Client dan build Next.js
 RUN pnpm prisma generate

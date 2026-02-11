@@ -1,14 +1,13 @@
 # Base stage - menggunakan Node.js 22 official image
-FROM node:22-slim AS base
+FROM node:22-alpine AS base
 
 # Install dependencies untuk Prisma dan Sharp
-RUN apt-get update && apt-get install -y \
-    openssl \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache \
+    libc6-compat \
+    openssl
 
 # Install pnpm
-RUN npm install -g pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # Dependencies stage
 FROM base AS deps
@@ -18,7 +17,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies dengan frozen lockfile
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --prod=false
 
 # Builder stage
 FROM base AS builder
@@ -36,40 +35,33 @@ ENV NODE_ENV=production
 
 # Generate Prisma Client dan build Next.js
 RUN pnpm prisma generate
-RUN pnpm next build
+RUN pnpm build
 
 # Runner stage - Production image
-FROM node:22-slim AS runner
+FROM node:22-alpine AS runner
 WORKDIR /app
 
-# Install dependencies untuk runtime
-RUN apt-get update && apt-get install -y \
-    openssl \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install pnpm
-RUN npm install -g pnpm
+# Install runtime dependencies
+RUN apk add --no-cache \
+    libc6-compat \
+    openssl
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Create non-root user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
 
 # Copy built application
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 # Copy Prisma files dan generated client
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/lib/generated ./lib/generated
-COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
-
-# Set ownership
-RUN chown -R nextjs:nodejs /app
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/lib/generated ./lib/generated
+COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.ts
 
 USER nextjs
 

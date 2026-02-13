@@ -10,7 +10,8 @@ import { BACKGROUND_COLORS } from "@/lib/background-colors";
 import { BACKGROUND_GRADIENTS } from "@/lib/background-gradients";
 import { getBackgroundPresets } from "@/server/website/background-presets/actions";
 import type { BackgroundPreset } from "@/server/website/background-presets/schema";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import WallpaperCategorySection from "./wallpaper-category-section";
 
 interface BackgroundOptionsProps {
   profile: ProfileEditorData;
@@ -40,6 +41,24 @@ export default function BackgroundOptions({ profile, onUpdate }: BackgroundOptio
   const handleBackgroundChange = (updates: Partial<ProfileEditorData>) => {
     onUpdate({ ...profile, ...updates });
   };
+
+  // Group wallpapers by category
+  const wallpapersByCategory = useMemo(() => {
+    const grouped = new Map<string, BackgroundPreset[]>();
+
+    wallpaperPresets.forEach((preset) => {
+      const category = preset.category || "Uncategorized";
+      if (!grouped.has(category)) {
+        grouped.set(category, []);
+      }
+      grouped.get(category)!.push(preset);
+    });
+
+    return Array.from(grouped.entries()).map(([category, wallpapers]) => ({
+      category,
+      wallpapers,
+    }));
+  }, [wallpaperPresets]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -140,19 +159,9 @@ export default function BackgroundOptions({ profile, onUpdate }: BackgroundOptio
             <p className="text-xs text-muted-foreground/70">Wallpapers will appear here once added</p>
           </div>
         ) : (
-          <div className="grid grid-cols-3 gap-2">
-            {wallpaperPresets.map((preset) => (
-              <button
-                key={preset.id}
-                onClick={() => handleBackgroundChange({ bgType: "wallpaper", bgWallpaper: preset.url })}
-                className={`relative h-20 overflow-hidden rounded-lg border-2 transition-all ${
-                  profile.bgWallpaper === preset.url ? "border-primary ring-2 ring-primary/20 ring-offset-2 ring-offset-background scale-105" : "border-transparent hover:border-primary/50 hover:scale-105"
-                }`}
-                title={preset.name}
-              >
-                <Image src={preset.url} fill className="object-cover transition-transform duration-500 group-hover:scale-110" alt={preset.name} sizes="(max-width: 768px) 33vw, 100px" />
-                {profile.bgWallpaper === preset.url && <div className="absolute inset-0 bg-primary/10 border-2 border-primary/30" />}
-              </button>
+          <div className="space-y-6">
+            {wallpapersByCategory.map(({ category, wallpapers }) => (
+              <WallpaperCategorySection key={category} category={category} wallpapers={wallpapers} selectedWallpaper={profile.bgWallpaper} onSelect={(url) => handleBackgroundChange({ bgType: "wallpaper", bgWallpaper: url })} />
             ))}
           </div>
         )}

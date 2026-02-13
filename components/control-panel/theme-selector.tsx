@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { THEMES, ProfileTheme } from "@/lib/themes";
 import type { ProfileEditorData } from "@/server/user/profile/payloads";
 import { updateTheme } from "@/server/user/profile/actions";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { toast } from "sonner";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Icons } from "@/components/icons";
@@ -17,8 +17,23 @@ interface ThemeSelectorProps {
   onUpdate: (profile: ProfileEditorData) => void;
 }
 
+// Extract theme item to separate component for better performance
+function ThemeItem({ theme, isActive, onSelect, renderIcon }: { theme: ProfileTheme & { fontName: string }; isActive: boolean; onSelect: () => void; renderIcon: (theme: ProfileTheme, className?: string) => React.ReactElement }) {
+  return (
+    <button onClick={onSelect} className={cn("w-full flex items-center justify-between gap-3 p-2.5 rounded-lg transition-all text-left", "hover:bg-zinc-100 dark:hover:bg-zinc-800/80", isActive && "bg-zinc-100/80 dark:bg-zinc-800/50")}>
+      <div className="flex items-center gap-3">
+        <div className={cn("p-2 rounded-lg transition-colors", isActive ? "bg-white dark:bg-zinc-950 shadow-sm border border-zinc-200 dark:border-zinc-700" : "bg-zinc-100 dark:bg-zinc-900")}>{renderIcon(theme, "h-4 w-4")}</div>
+        <div className="flex flex-col">
+          <span className={cn("text-sm font-medium", isActive ? "text-foreground" : "text-muted-foreground")}>{theme.name}</span>
+          <span className="text-[10px] text-muted-foreground/60 capitalize leading-none pt-0.5">{theme.fontName}</span>
+        </div>
+      </div>
+      {isActive && <Check className="h-4 w-4 text-primary" />}
+    </button>
+  );
+}
+
 export function ThemeSelector({ profile, onUpdate }: ThemeSelectorProps) {
-  const themes = Object.values(THEMES);
   const saveTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const [open, setOpen] = useState(false);
 
@@ -50,7 +65,22 @@ export function ThemeSelector({ profile, onUpdate }: ThemeSelectorProps) {
     return <div className={cn("h-4 w-4 shrink-0 rounded-full border border-black/5 dark:border-white/10 shadow-sm", className)} style={{ background: theme.variables["--primary"] || theme.variables["--foreground"] }} />;
   };
 
+  // Pre-compute themes with font names to avoid repeated string operations
+  const themesWithFontNames = useMemo(
+    () =>
+      Object.values(THEMES).map((theme) => ({
+        ...theme,
+        fontName: theme.variables["--font-sans"].split(",")[0].trim(),
+      })),
+    [],
+  );
+
   const currentTheme = THEMES[profile.theme] || THEMES["default"];
+
+  const handleThemeSelect = (themeId: string) => {
+    onUpdate({ ...profile, theme: themeId });
+    setOpen(false);
+  };
 
   return (
     <div className="space-y-3">
@@ -72,7 +102,7 @@ export function ThemeSelector({ profile, onUpdate }: ThemeSelectorProps) {
             <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50 transition-transform duration-200 group-data-[state=open]:rotate-180" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[310px] p-0 overflow-hidden border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl shadow-2xl" align="center" sideOffset={8}>
+        <PopoverContent className="w-[310px] p-0 overflow-hidden border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-2xl" align="center" sideOffset={8}>
           <div className="p-2 border-b border-zinc-200/50 dark:border-zinc-800/50 bg-zinc-50/50 dark:bg-zinc-900/30 flex items-center gap-2">
             <div className="p-1 rounded bg-zinc-200 dark:bg-zinc-800">
               <Palette className="h-3 w-3 text-zinc-500" />
@@ -80,28 +110,9 @@ export function ThemeSelector({ profile, onUpdate }: ThemeSelectorProps) {
             <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Select Typography</span>
           </div>
           <div className="max-h-[350px] overflow-y-auto p-1 custom-scrollbar">
-            {themes.map((theme) => {
-              const isActive = profile.theme === theme.id;
-              return (
-                <button
-                  key={theme.id}
-                  onClick={() => {
-                    onUpdate({ ...profile, theme: theme.id });
-                    setOpen(false);
-                  }}
-                  className={cn("w-full flex items-center justify-between gap-3 p-2.5 rounded-lg transition-all text-left", "hover:bg-zinc-100 dark:hover:bg-zinc-800/80", isActive && "bg-zinc-100/80 dark:bg-zinc-800/50")}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={cn("p-2 rounded-lg transition-colors", isActive ? "bg-white dark:bg-zinc-950 shadow-sm border border-zinc-200 dark:border-zinc-700" : "bg-zinc-100 dark:bg-zinc-900")}>{renderIcon(theme, "h-4 w-4")}</div>
-                    <div className="flex flex-col">
-                      <span className={cn("text-sm font-medium", isActive ? "text-foreground" : "text-muted-foreground")}>{theme.name}</span>
-                      <span className="text-[10px] text-muted-foreground/60 capitalize leading-none pt-0.5">{theme.variables["--font-sans"].split(",")[0].trim()}</span>
-                    </div>
-                  </div>
-                  {isActive && <Check className="h-4 w-4 text-primary" />}
-                </button>
-              );
-            })}
+            {themesWithFontNames.map((theme) => (
+              <ThemeItem key={theme.id} theme={theme} isActive={profile.theme === theme.id} onSelect={() => handleThemeSelect(theme.id)} renderIcon={renderIcon} />
+            ))}
           </div>
         </PopoverContent>
       </Popover>

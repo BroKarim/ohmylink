@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import BackgroundOptions from "@/components/control-panel/background-options";
 import BackgroundPattern from "@/components/control-panel/background-pattern";
 import BackgroundEffect from "@/components/control-panel/background-effect";
@@ -11,42 +10,27 @@ interface ThemeTabProps {
   onUpdate: (profile: ProfileEditorData) => void;
 }
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.05,
-    },
-  },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 10 },
-  show: { opacity: 1, y: 0 },
-};
-
 export function ThemeTab({ profile, onUpdate }: ThemeTabProps) {
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="px-3 pb-4">
+    <div className="px-3 pb-4">
       <div className="space-y-6">
-        <motion.div variants={item}>
+        <div>
           <ThemeSelector profile={profile} onUpdate={onUpdate} />
-        </motion.div>
+        </div>
 
-        <motion.div variants={item} className="w-full flex gap-x-2 justify-between items-center">
+        <div className="w-full flex gap-x-2 justify-between items-center">
           <BackgroundPattern profile={profile} onUpdate={onUpdate} />
           <BackgroundEffect profile={profile} onUpdate={onUpdate} />
-        </motion.div>
+        </div>
 
-        <motion.div variants={item}>
+        <div>
           <BackgroundOptions profile={profile} onUpdate={onUpdate} />
-        </motion.div>
+        </div>
 
-        <motion.div variants={item}>
+        <div>
           <CardTextureSelector profile={profile} onUpdate={onUpdate} />
-        </motion.div>
+        </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

@@ -109,12 +109,12 @@ export default function BackgroundOptions({ profile, onUpdate }: BackgroundOptio
             <button
               key={color}
               onClick={() => handleBackgroundChange({ bgType: "color", bgColor: color })}
-              className={`relative aspect-square h-10 w-10 rounded-full transition-all duration-200 ${
+              className={`relative aspect-square h-10 w-10 rounded-md transition-all duration-200 ${
                 profile.bgColor === color ? "ring-2 ring-primary ring-offset-2 ring-offset-background scale-110 z-10" : "hover:scale-110 active:scale-95 border border-black/5"
               }`}
               style={{ backgroundColor: color }}
             >
-              {profile.bgColor === color && <div className="absolute inset-0 rounded-full border-2 border-primary/20 animate-pulse" />}
+              {profile.bgColor === color && <div className="absolute inset-0 rounded-md border-2 border-primary/20 animate-pulse" />}
             </button>
           ))}
         </div>

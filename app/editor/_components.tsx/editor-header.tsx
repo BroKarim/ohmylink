@@ -23,6 +23,11 @@ export default function EditorHeader({ profile }: EditorHeaderProps) {
   const { isDirty, markAsSaved, originalProfile, draftProfile, discardChanges } = useEditorStore();
   const [isPending, startTransition] = useTransition();
 
+  const handleDiscard = () => {
+    discardChanges();
+    toast.info("Changes discarded");
+  };
+
   const handleSave = async () => {
     if (!draftProfile || !isDirty) return;
 
@@ -146,7 +151,7 @@ export default function EditorHeader({ profile }: EditorHeaderProps) {
   };
 
   return (
-    <header className=" backdrop-blur-md sticky top-0 z-50 px-6 py-3">
+    <header className="bg-background/95 sticky top-0 z-50 px-6 py-3 border-b">
       <div className="flex items-center justify-between">
         <div className="flex items-center justify-center gap-4">
           <Link href="/" className="font-bold text-xl tracking-tighter">
@@ -165,21 +170,10 @@ export default function EditorHeader({ profile }: EditorHeaderProps) {
         {/* Center: Save & Discard Buttons */}
         <div className="flex items-center gap-3">
           {isDirty && (
-            <div className="flex items-center gap-2 animate-in fade-in slide-in-from-right-2 duration-300">
+            <div className="flex items-center gap-2">
               <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mr-1">Unsaved</span>
-              <Button
-                onClick={() => {
-                  discardChanges();
-                  toast.info("Changes discarded");
-                }}
-                disabled={isPending}
-                size="sm"
-                variant="ghost"
-                className="h-8 gap-1.5 text-xs hover:bg-destructive/10 hover:text-destructive transition-colors group px-2"
-              >
-                <div className="group-hover:rotate-[-45deg] transition-transform duration-300">
-                  <RotateCcw className="h-3.5 w-3.5" />
-                </div>
+              <Button onClick={handleDiscard} disabled={isPending} size="sm" variant="ghost" className="h-8 gap-1.5 text-xs hover:bg-destructive/10 hover:text-destructive transition-colors px-2">
+                <RotateCcw className="h-3.5 w-3.5" />
                 Discard
               </Button>
             </div>

@@ -61,7 +61,7 @@
 
 :root {
   --radius: 0.625rem;
---background: oklch(0.147 0.004 49.25);
+  --background: oklch(0.147 0.004 49.25);
   --foreground: oklch(0.985 0.001 106.423);
   --card: oklch(20.945% 0.00197 286.056);
   --card-foreground: oklch(0.985 0.001 106.423);
@@ -99,7 +99,6 @@
   --success-foreground: var(--color-emerald-400);
   --warning: var(--color-amber-500);
   --warning-foreground: var(--color-amber-400);
-
 }
 
 .dark {
@@ -179,5 +178,18 @@
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+  .shadow-dzenn {
+    box-shadow:
+      0px 32px 64px -16px #0000004c,
+      0px 16px 32px -8px #0000004c,
+      0px 8px 16px -4px #0000003d,
+      0px 4px 8px -2px #0000003d,
+      0px -8px 16px -1px #00000029,
+      0px 2px 4px -1px #0000003d,
+      0px 0px 0px 1px #000000,
+      inset 0px 0px 0px 1px #ffffff14,
+      inset 0px 1px 0px #ffffff33;
   }
 }

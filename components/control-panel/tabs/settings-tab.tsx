@@ -1,9 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { Settings, User, Globe, Trash2, LogOut, Loader2 } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { useState, useTransition, useCallback, useMemo } from "react";
+import { User, Globe, Trash2, LogOut, Loader2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -26,35 +24,63 @@ export function SettingsTab({ profile }: SettingsTabProps) {
   const [isPending, startTransition] = useTransition();
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const hasChanges = username !== profile.username || isPublished !== profile.isPublished;
+  // Memoize expensive computations
+  const hasChanges = useMemo(() => username !== profile.username || isPublished !== profile.isPublished, [username, profile.username, isPublished, profile.isPublished]);
 
-  const handleSaveSettings = async () => {
+  // Memoize username sanitization to avoid recreating function on every render
+  const handleUsernameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const sanitized = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
+    setUsername(sanitized);
+  }, []);
+
+  const handleSaveSettings = () => {
     startTransition(async () => {
       const toastId = toast.loading("Saving settings...");
 
       try {
-        // Update username if changed
-        if (username !== profile.username) {
-          const result = await updateProfileUsername(username);
-          if (!result.success) {
-            toast.error(result.error || "Failed to update username", { id: toastId });
-            return;
-          }
+        const promises = [];
+        const hasUsernameChange = username !== profile.username;
+        const hasPublishChange = isPublished !== profile.isPublished;
+
+        // Queue updates
+        if (hasUsernameChange) {
+          promises.push(updateProfileUsername(username));
         }
 
-        // Update publish status if changed
-        if (isPublished !== profile.isPublished) {
-          const result = await togglePublishStatus(isPublished);
-          if (!result.success) {
-            toast.error(result.error || "Failed to update publish status", { id: toastId });
-            return;
-          }
+        if (hasPublishChange) {
+          promises.push(togglePublishStatus(isPublished));
+        }
+
+        if (promises.length === 0) {
+          toast.dismiss(toastId);
+          return;
+        }
+
+        // Execute in parallel
+        const results = await Promise.allSettled(promises);
+
+        // Check results
+        const usernameResult = hasUsernameChange ? (results[0] as PromiseFulfilledResult<any>).value : null;
+        const publishResult = hasPublishChange ? (hasUsernameChange ? (results[1] as PromiseFulfilledResult<any>).value : (results[0] as PromiseFulfilledResult<any>).value) : null;
+
+        let errorMsg = "";
+
+        if (usernameResult && !usernameResult.success) {
+          errorMsg += usernameResult.error + ". ";
+        }
+        if (publishResult && !publishResult.success) {
+          errorMsg += publishResult.error;
+        }
+
+        if (errorMsg) {
+          toast.error(errorMsg, { id: toastId });
+          return;
         }
 
         toast.success("Settings saved successfully", { id: toastId });
 
         // Redirect to new username if changed
-        if (username !== profile.username) {
+        if (hasUsernameChange) {
           // Clear localStorage when username changes (new profile context)
           if (typeof window !== "undefined") {
             localStorage.removeItem("dzenn-editor-draft");
@@ -140,7 +166,7 @@ export function SettingsTab({ profile }: SettingsTabProps) {
               <input
                 id="username"
                 value={username}
-                onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+                onChange={handleUsernameChange}
                 placeholder="your-username"
                 className="w-full text-sm pl-[88px] pr-4 py-2 h-10 transition-all bg-muted/30 hover:bg-muted/50 border border-border rounded-full text-foreground font-medium focus:outline-none focus:ring-1 focus:ring-primary/20"
               />
@@ -190,26 +216,30 @@ export function SettingsTab({ profile }: SettingsTabProps) {
           {/* Delete Profile */}
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="outline" className="w-full text-destructive border-destructive/50 hover:bg-destructive/10">
+              <Button variant="outline" className="w-full text-destructive border-white/5 bg-white/5 hover:bg-destructive/10 hover:border-destructive/50 transition-colors">
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete Profile
               </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="border-white/10 bg-zinc-950 shadow-dzenn">
               <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>This action cannot be undone. This will permanently delete your profile and all associated data. If this is your only profile, your entire account will be deleted.</AlertDialogDescription>
+                <AlertDialogTitle className="text-xl font-bold">Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription className="text-zinc-400">
+                  This action is irreversible. This will permanently delete your profile and all associated data.
+                  {profile.username && <span className="block mt-2 font-medium text-destructive">Warning: dzenn.link/{profile.username} will be gone forever.</span>}
+                  If this is your only profile, your entire account will also be closed.
+                </AlertDialogDescription>
               </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDeleteProfile} disabled={isDeleting} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              <AlertDialogFooter className="mt-4">
+                <AlertDialogCancel className="bg-transparent border-white/10 hover:bg-white/5 text-white">Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDeleteProfile} disabled={isDeleting} className="bg-destructive text-white hover:bg-destructive/90 border-none px-6">
                   {isDeleting ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Deleting...
                     </>
                   ) : (
-                    "Delete Profile"
+                    "Delete Permanently"
                   )}
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -217,10 +247,26 @@ export function SettingsTab({ profile }: SettingsTabProps) {
           </AlertDialog>
 
           {/* Logout */}
-          <Button variant="outline" className="w-full" onClick={handleLogout}>
-            <LogOut className="mr-2 h-4 w-4" />
-            Logout
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" className="w-full border-white/5 bg-white/5 hover:bg-white/10 transition-colors">
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="border-white/10 bg-zinc-950 shadow-dzenn max-w-[400px]">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-xl font-bold">Ready to leave?</AlertDialogTitle>
+                <AlertDialogDescription className="text-zinc-400">You'll be signed out of your account on this device. Any unsaved changes in the editor might be lost.</AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="mt-4">
+                <AlertDialogCancel className="bg-transparent border-white/10 hover:bg-white/5 text-white">Stay logged in</AlertDialogCancel>
+                <AlertDialogAction onClick={handleLogout} className="bg-white text-black hover:bg-zinc-200 border-none px-6">
+                  Logout
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </div>

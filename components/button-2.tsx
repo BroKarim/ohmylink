@@ -17,8 +17,7 @@ const buttonVariants = cva(
         dark: "bg-zinc-900 text-zinc-50 hover:bg-zinc-900/90 dark:bg-zinc-50 dark:text-zinc-900",
         darkgradient: "bg-gradient-to-t from-[#0f0f0f] to-[#404040] shadow-[0_0_0_1px_#383838] text-gray-50 hover:brightness-110",
         radialblue: "text-gray-50 [background:radial-gradient(90%_100%_at_15%_12%,#9BC4FF_0%,#3588FF_100%)] shadow-[0_0_0_1px_rgba(53,136,255,1)] hover:opacity-90",
-        premium:
-          "bg-gradient-to-b from-violet-500 to-violet-600 text-white shadow-[0px_32px_64px_-16px_#0000004c,0px_16px_32px_-8px_#0000004c,0px_8px_16px_-4px_#0000003d,0px_4px_8px_-2px_#0000003d,0px_-8px_16px_-1px_#00000029,0px_2px_4px_-1px_#0000003d,0px_0px_0px_1px_#000000,inset_0px_0px_0px_1px_#ffffff14,inset_0px_1px_0px_#ffffff33] hover:from-violet-400 hover:to-violet-500",
+        premium: "bg-gradient-to-b from-violet-500 to-violet-600 text-white shadow-dzenn hover:from-violet-400 hover:to-violet-500",
       },
       size: {
         xs: "h-7 px-2 text-[10px]",

@@ -3,8 +3,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Upload, Image as ImageIcon, Palette, Rainbow } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import type { ProfileEditorData } from "@/server/user/profile/payloads";
 import { BACKGROUND_COLORS } from "@/lib/background-colors";
 import { BACKGROUND_GRADIENTS } from "@/lib/background-gradients";
@@ -75,7 +73,7 @@ export default function BackgroundOptions({ profile, onUpdate }: BackgroundOptio
   };
 
   return (
-    <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
+    <Tabs value={activeTab} defaultValue="wallpaper" onValueChange={(v) => setActiveTab(v as any)}>
       <TabsList className="grid w-full grid-cols-4 h-auto bg-transparent  p-1 gap-1">
         <TabsTrigger value="color" className="p-0 h-full w-full">
           <div className="w-full h-full rounded-md border-2 border-dashed border-muted-foreground/30 flex items-center justify-center gap-2 bg-muted/20">

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSession } from "@/lib/auth-client";
@@ -27,17 +26,20 @@ export function Hero() {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-zinc-950">
-      {/* Background Image with Blur-up Loading */}
+      {/* Background Image with Optimized Loading */}
       <div className="absolute inset-0 z-0">
-        <Image
-          src="https://res.cloudinary.com/dctl5pihh/image/upload/v1768287477/background_valoru.jpg"
+        <img
+          src="https://res.cloudinary.com/dctl5pihh/image/upload/f_auto,q_auto,w_1920/background_valoru.jpg"
           alt="Hero background"
-          fill
-          priority
-          quality={90}
-          className={`object-cover transition-all duration-700 ${isHovered ? "scale-105" : "scale-100"} ${imageLoaded ? "blur-0" : "blur-xl scale-110"}`}
+          loading="eager"
+          fetchPriority="high"
+          className={`w-full h-full object-cover transition-[transform,opacity] duration-700 ${isHovered ? "scale-105" : "scale-100"} ${imageLoaded ? "opacity-100" : "opacity-90 scale-110"}`}
           onLoad={() => setImageLoaded(true)}
-          sizes="100vw"
+          onError={(e) => {
+            console.error("Image failed to load:", e);
+            // Fallback to original URL if transformation fails
+            (e.target as HTMLImageElement).src = "https://res.cloudinary.com/dctl5pihh/image/upload/v1768287477/background_valoru.jpg";
+          }}
         />
       </div>
 

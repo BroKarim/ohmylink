@@ -4,6 +4,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useSession } from "@/lib/auth-client";
 import { ArrowRightIcon } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export function LandingNav() {
   const { data: session, isPending } = useSession();
@@ -13,8 +14,9 @@ export function LandingNav() {
     { name: "Info", href: "/info" },
   ];
 
-  const shadowClass =
-    "shadow-[0px_32px_64px_-16px_#0000004c,0px_16px_32px_-8px_#0000004c,0px_8px_16px_-4px_#0000003d,0px_4px_8px_-2px_#0000003d,0px_-8px_16px_-1px_#00000029,0px_2px_4px_-1px_#0000003d,0px_0px_0px_1px_#000000,inset_0px_0px_0px_1px_#ffffff14,inset_0px_1px_0px_#ffffff33]";
+  const pathname = usePathname();
+
+  const shadowClass = "shadow-dzenn";
 
   return (
     <nav className="fixed top-4 left-4 md:left-16 z-50 flex items-center gap-3">
@@ -25,11 +27,14 @@ export function LandingNav() {
 
       {/* nav links */}
       <div className={cn("flex items-center gap-1 p-1 rounded-full bg-[#222] border-none", shadowClass)}>
-        {navLinks.map((link) => (
-          <Link key={link.name} href={link.href} className="px-4 py-1.5 rounded-full text-[13px] font-medium text-zinc-400 hover:text-white transition-colors duration-200">
-            {link.name}
-          </Link>
-        ))}
+        {navLinks.map((link) => {
+          const isActive = pathname === link.href;
+          return (
+            <Link key={link.name} href={link.href} className={cn("px-4 py-1.5 text-[13px] font-medium transition-colors duration-200", isActive ? "text-purple-400 " : "text-zinc-400 hover:text-white")}>
+              {link.name}
+            </Link>
+          );
+        })}
         {isPending ? (
           <div className="px-4 py-1.5 w-16 h-5 animate-pulse bg-zinc-800 rounded-full" />
         ) : session ? (

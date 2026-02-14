@@ -1,4 +1,7 @@
+import { useMemo } from "react";
 import { PatternRenderer } from "./pattern-renderer";
+import { getBackgroundStyle, getFilterStyle, shouldScaleForBlur } from "@/lib/utils/preview-background";
+import type { BackgroundEffects } from "@/lib/utils/preview-background";
 
 interface PreviewBackgroundProps {
   profile: {
@@ -14,60 +17,57 @@ interface PreviewBackgroundProps {
 }
 
 export function PreviewBackground({ profile }: PreviewBackgroundProps) {
-  const bgEffects = profile.bgEffects as any;
+  const bgEffects = profile.bgEffects as BackgroundEffects | null;
   const bgPattern = (profile.bgPattern as any) || { type: "none", color: "#ffffff", opacity: 10, thickness: 1, scale: 20 };
 
-  const getBackgroundStyle = () => {
-    switch (profile.bgType) {
-      case "gradient":
-        return { background: `linear-gradient(135deg, ${profile.bgGradientFrom} 0%, ${profile.bgGradientTo} 100%)` };
-      case "wallpaper": {
-        const fileName = profile.bgWallpaper?.split("/").pop();
-        const wallappersUrl = fileName ? `https://d1uuiykksp6inc.cloudfront.net/wallappers/${fileName}` : profile.bgWallpaper;
-        return {
-          backgroundImage: `url(${wallappersUrl})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        };
-      }
-      case "image":
-        return {
-          backgroundImage: `url(${profile.bgImage})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        };
-      default:
-        return { backgroundColor: profile.bgColor };
-    }
-  };
+  // Memoize expensive computations
+  const backgroundStyle = useMemo(() => getBackgroundStyle(profile), [profile.bgType, profile.bgColor, profile.bgGradientFrom, profile.bgGradientTo, profile.bgWallpaper, profile.bgImage]);
+
+  const filterStyle = useMemo(() => getFilterStyle(bgEffects), [bgEffects?.blur, bgEffects?.brightness, bgEffects?.saturation, bgEffects?.contrast]);
+
+  const shouldScale = useMemo(() => shouldScaleForBlur(bgEffects?.blur), [bgEffects?.blur]);
+
+  const noiseOpacity = useMemo(() => (bgEffects?.noise ?? 0) / 100, [bgEffects?.noise]);
 
   return (
     <>
+      {/* Background Layer - Only transition background properties, NOT filters */}
       <div
-        className="absolute inset-0 transition-all duration-500"
+        className="absolute inset-0"
         style={{
-          ...getBackgroundStyle(),
-          filter: `
-            blur(${bgEffects?.blur ?? 0}px) 
-            brightness(${bgEffects?.brightness ?? 100}%) 
-            saturate(${bgEffects?.saturation ?? 100}%) 
-            contrast(${bgEffects?.contrast ?? 100}%)
-          `,
-          transform: (bgEffects?.blur ?? 0) > 0 ? "scale(1.1)" : "scale(1)",
+          ...backgroundStyle,
+          transition: "background-color 0.5s ease, background-image 0.5s ease",
+          willChange: filterStyle !== "none" ? "filter, transform" : "auto",
         }}
       />
+
+      {/* Effects Layer - Separated to avoid repainting background on filter changes */}
+      {filterStyle !== "none" && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            backdropFilter: filterStyle,
+            WebkitBackdropFilter: filterStyle,
+            transform: shouldScale ? "scale(1.1)" : "scale(1)",
+            transition: "backdrop-filter 0.3s ease, transform 0.3s ease",
+          }}
+        />
+      )}
 
       {/* Pattern Layer */}
       <PatternRenderer type={bgPattern.type} color={bgPattern.color} opacity={bgPattern.opacity} thickness={bgPattern.thickness} scale={bgPattern.scale} />
 
-      <div
-        className="absolute inset-0 pointer-events-none mix-blend-overlay"
-        style={{
-          opacity: (bgEffects?.noise ?? 0) / 100,
-          backgroundImage: `url('https://grainy-gradients.vercel.app/noise.svg')`,
-          filter: "contrast(150%) brightness(100%)",
-        }}
-      />
+      {/* Noise Overlay */}
+      {noiseOpacity > 0 && (
+        <div
+          className="absolute inset-0 pointer-events-none mix-blend-overlay"
+          style={{
+            opacity: noiseOpacity,
+            backgroundImage: `url('https://grainy-gradients.vercel.app/noise.svg')`,
+            filter: "contrast(150%) brightness(100%)",
+          }}
+        />
+      )}
     </>
   );
 }
